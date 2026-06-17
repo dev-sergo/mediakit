@@ -4,6 +4,10 @@
 
 Local AI media toolkit for a single GPU machine. Three interfaces to one codebase: Python package, CLI, HTTP server.
 
+| Original | Background removed | Product shot |
+|---|---|---|
+| ![original](thai-ice-green-tea.jpeg) | ![nobg](thai-ice-green-tea-remove-background.png) | ![product shot](thai-ice-green-tea-use-white-background.png) |
+
 **Native ops** — compress, resize, convert, variants, lqip. Run in-process via Pillow. No GPU, no queue, instant result.
 
 **AI image ops** — txt2img (SDXL or Flux 2), img-edit (SDXL or Qwen), bg-remove, upscale. Run via ComfyUI on a local GPU through an arq job queue.
@@ -278,6 +282,18 @@ FastAPI :8000       Typer CLI
 ```
 
 Native ops run synchronously inside the FastAPI process. Nothing that touches the GPU runs outside the worker.
+
+---
+
+## Showcase
+
+### product_shot — background removal + contact shadow
+
+| Original | Background removed | Product shot |
+|---|---|---|
+| ![original](thai-ice-green-tea.jpeg) | ![nobg](thai-ice-green-tea-remove-background.png) | ![product shot](thai-ice-green-tea-use-white-background.png) |
+
+`bg_color=#F8F8F8`, `shadow_opacity=70`, `shadow_blur=22`, upscale 2×, variants 640/1024/1280px webp
 
 ---
 
