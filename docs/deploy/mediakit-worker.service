@@ -1,0 +1,18 @@
+[Unit]
+Description=mediakit arq worker (GPU, max_jobs=1)
+After=network.target redis.service
+Requires=redis.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/mediakit
+EnvironmentFile=/home/ubuntu/mediakit/.env
+ExecStart=/home/ubuntu/mediakit/.venv/bin/mediakit-worker
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

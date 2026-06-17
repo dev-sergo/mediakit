@@ -1,0 +1,105 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mediakit"
+version = "0.1.0"
+description = "Local AI media toolkit — image and video generation via ComfyUI, native ops via Pillow, served over FastAPI or used as a Python package."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["image-processing", "video-generation", "ai", "comfyui", "fastapi", "stable-diffusion", "flux", "ltxvideo"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Multimedia :: Video",
+    "Typing :: Typed",
+]
+dependencies = [
+    # HTTP & async
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-multipart>=0.0.20",
+    "httpx>=0.28.0",
+    "websockets>=14.1",
+    # Data validation
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    # Queue & caching
+    "arq>=0.26.1",
+    "redis>=5.2.1",
+    # Logging & observability
+    "structlog>=25.1.0",
+    "sentry-sdk[fastapi]>=2.18.0",
+    # CLI
+    "typer>=0.15.1",
+    # Image processing (native backend)
+    "pillow>=11.1.0",
+    "opencv-python-headless>=4.10.0",
+    "piexif>=1.1.3",
+    # Typing
+    "typing-extensions>=4.12.0",
+    # Lab / experiments
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.9.0",
+    "mypy>=1.14.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "respx>=0.22.0",
+    "types-pillow>=10.2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/bubnov-io/mediakit"
+Issues = "https://github.com/bubnov-io/mediakit/issues"
+
+[project.scripts]
+mediakit = "mediakit.cli.main:app"
+mediakit-worker = "mediakit.jobs.worker:main"
+mediakit-server = "mediakit.server.app:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mediakit"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "B", "UP", "ANN", "S", "C4", "PT"]
+ignore = ["ANN401", "S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN", "S"]
+"scripts/*" = ["ANN", "S"]
+"lab/*" = ["ANN", "S", "T201"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+exclude = ["tests/", "scripts/", "lab/"]
+
+[[tool.mypy.overrides]]
+module = ["cv2.*", "arq.*", "piexif.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "integration: requires running ComfyUI and Redis",
+    "gpu: requires GPU and ComfyUI with models loaded",
+]

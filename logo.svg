@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 210" width="860" height="210">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1025"/>
+      <stop offset="100%" stop-color="#131728"/>
+    </linearGradient>
+    <linearGradient id="wordmark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ddd6fe"/>
+    </linearGradient>
+    <linearGradient id="accentBar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#c084fc" stop-opacity="0"/>
+      <stop offset="25%"  stop-color="#c084fc" stop-opacity="0.95"/>
+      <stop offset="75%"  stop-color="#818cf8" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softBloom" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="860" height="210" rx="14" fill="url(#bg)"/>
+
+  <!-- Ambient glow left -->
+  <ellipse cx="80" cy="40" rx="160" ry="90" fill="#7c3aed" opacity="0.07" filter="url(#softBloom)"/>
+  <!-- Ambient glow right -->
+  <ellipse cx="720" cy="120" rx="180" ry="110" fill="#4f46e5" opacity="0.05" filter="url(#softBloom)"/>
+
+  <!-- Border -->
+  <rect width="860" height="210" rx="14" fill="none" stroke="rgba(192,132,252,0.15)" stroke-width="1"/>
+
+  <!-- Left accent bar -->
+  <rect x="44" y="52" width="3" height="108" rx="1.5" fill="url(#accentBar)"/>
+
+  <!-- Label -->
+  <text x="60" y="78"
+    font-family="ui-monospace,'SF Mono','Cascadia Code',monospace"
+    font-size="11" font-weight="500" letter-spacing="5"
+    fill="#c084fc" opacity="0.7">MEDIA TOOLKIT</text>
+
+  <!-- Wordmark -->
+  <text x="57" y="138"
+    font-family="ui-monospace,'SF Mono','Cascadia Code',monospace"
+    font-size="58" font-weight="700"
+    fill="url(#wordmark)">mediakit</text>
+
+  <!-- Tagline -->
+  <text x="60" y="168"
+    font-family="system-ui,-apple-system,sans-serif"
+    font-size="13.5" letter-spacing="0.2"
+    fill="rgba(255,255,255,0.30)">CLI · HTTP · Python · GPU · ComfyUI</text>
+
+
+  <!-- ═══ DIVIDER ═══ -->
+  <line x1="432" y1="28" x2="432" y2="182"
+    stroke="rgba(192,132,252,0.08)" stroke-width="1" stroke-dasharray="3,6"/>
+
+
+  <!-- ═══ NATIVE OPS COLUMN (x ≈ 470–590) ═══ -->
+
+  <!-- Column header -->
+  <text x="510" y="44" text-anchor="middle"
+    font-family="ui-monospace,'SF Mono',monospace"
+    font-size="9.5" letter-spacing="2.5" font-weight="600"
+    fill="#818cf8" opacity="0.65">NATIVE · PILLOW</text>
+
+  <!-- Header underline -->
+  <line x1="456" y1="50" x2="564" y2="50"
+    stroke="rgba(129,140,248,0.25)" stroke-width="0.8"/>
+
+  <!-- Op rows: dot + name -->
+  <!-- compress -->
+  <circle cx="462" cy="70" r="3" fill="#818cf8" opacity="0.5" filter="url(#glow)"/>
+  <text x="473" y="74" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.55)">compress</text>
+
+  <!-- resize -->
+  <circle cx="462" cy="96" r="3" fill="#818cf8" opacity="0.5" filter="url(#glow)"/>
+  <text x="473" y="100" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.55)">resize</text>
+
+  <!-- convert -->
+  <circle cx="462" cy="122" r="3" fill="#818cf8" opacity="0.5" filter="url(#glow)"/>
+  <text x="473" y="126" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.55)">convert</text>
+
+  <!-- variants -->
+  <circle cx="462" cy="148" r="3" fill="#818cf8" opacity="0.5" filter="url(#glow)"/>
+  <text x="473" y="152" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.55)">variants</text>
+
+  <!-- lqip -->
+  <circle cx="462" cy="174" r="3" fill="#818cf8" opacity="0.5" filter="url(#glow)"/>
+  <text x="473" y="178" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.55)">lqip</text>
+
+
+  <!-- ═══ CENTER DIVIDER ═══ -->
+  <line x1="608" y1="40" x2="608" y2="188"
+    stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+
+
+  <!-- ═══ AI OPS COLUMN (x ≈ 625–810) ═══ -->
+
+  <!-- Column header -->
+  <text x="718" y="44" text-anchor="middle"
+    font-family="ui-monospace,'SF Mono',monospace"
+    font-size="9.5" letter-spacing="2.5" font-weight="600"
+    fill="#c084fc" opacity="0.65">AI · COMFYUI · GPU</text>
+
+  <!-- Header underline -->
+  <line x1="622" y1="50" x2="814" y2="50"
+    stroke="rgba(192,132,252,0.25)" stroke-width="0.8"/>
+
+  <!-- txt2img -->
+  <circle cx="630" cy="70" r="3.5" fill="#c084fc" opacity="0.75" filter="url(#glow)"/>
+  <text x="643" y="74" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.70)">txt2img</text>
+
+  <!-- img-edit -->
+  <circle cx="630" cy="99" r="3.5" fill="#c084fc" opacity="0.75" filter="url(#glow)"/>
+  <text x="643" y="103" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.70)">img-edit</text>
+
+  <!-- bg-remove -->
+  <circle cx="630" cy="128" r="3.5" fill="#c084fc" opacity="0.75" filter="url(#glow)"/>
+  <text x="643" y="132" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.70)">bg-remove</text>
+
+  <!-- upscale -->
+  <circle cx="630" cy="157" r="3.5" fill="#c084fc" opacity="0.75" filter="url(#glow)"/>
+  <text x="643" y="161" font-family="ui-monospace,'SF Mono',monospace" font-size="12.5"
+    fill="rgba(255,255,255,0.70)">upscale</text>
+
+  <!-- pipelines badge -->
+  <rect x="630" y="170" width="106" height="18" rx="4"
+    fill="rgba(192,132,252,0.08)" stroke="rgba(192,132,252,0.22)" stroke-width="0.8"/>
+  <text x="683" y="182" text-anchor="middle"
+    font-family="ui-monospace,'SF Mono',monospace"
+    font-size="10" letter-spacing="1"
+    fill="rgba(192,132,252,0.65)">+ 3 pipelines</text>
+
+</svg>

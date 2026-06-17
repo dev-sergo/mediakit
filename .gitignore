@@ -1,0 +1,31 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+.venv/
+venv/
+
+storage/uploads/
+storage/outputs/
+
+# Generated output (scripts write here; never commit results)
+output/
+
+# Lab — local experiment workspace, not part of the public package
+lab/
+
+# Video outputs
+*.mp4
+*.gif
+*.webm
+
+*.DS_Store
