@@ -285,18 +285,6 @@ Native ops run synchronously inside the FastAPI process. Nothing that touches th
 
 ---
 
-## Showcase
-
-### product_shot — background removal + contact shadow
-
-| Original | Background removed | Product shot |
-|---|---|---|
-| ![original](thai-ice-green-tea.jpeg) | ![nobg](thai-ice-green-tea-remove-background.png) | ![product shot](thai-ice-green-tea-use-white-background.png) |
-
-`bg_color=#F8F8F8`, `shadow_opacity=70`, `shadow_blur=22`, upscale 2×, variants 640/1024/1280px webp
-
----
-
 ## License
 
 MIT — see [LICENSE](LICENSE).
