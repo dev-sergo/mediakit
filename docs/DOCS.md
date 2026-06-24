@@ -1,6 +1,6 @@
 # mediakit — developer documentation
 
-> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 52 tests (12 unit + 40 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested. CogVideoX-5B added to txt2video/img2video (kijai wrapper, pending GPU-box verification) and a `seamless_video` pipeline for arbitrary-length clips.
+> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 61 tests (12 unit + 49 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested. CogVideoX-5B added to txt2video/img2video (kijai wrapper, pending GPU-box verification) and a `seamless_video` pipeline for arbitrary-length clips.
 
 ---
 
@@ -232,7 +232,7 @@ POST  /v1/ops/txt2img                       form: prompt, negative, backend(sdxl
 POST  /v1/ops/img-edit                      multipart: file + form: prompt, negative, backend(sdxl|qwen), mask, lora_strength, steps, cfg, seed
 POST  /v1/ops/bg-remove                     multipart: file + form: model, background, color
 POST  /v1/ops/upscale                       multipart: file + form: model, scale
-POST  /v1/ops/txt2video                     form: prompt, negative, model(ltxv|wan), width, height, length, fps, steps, cfg, seed
+POST  /v1/ops/txt2video                     form: prompt, negative, model(ltxv|wan|cogvideox), width, height, length, fps, steps, cfg, seed
 POST  /v1/ops/img2video                     multipart: file + form: prompt, negative, width, height, length, fps, steps, cfg, seed
 
 # Job polling + output download
@@ -323,7 +323,7 @@ uv run mediakit-server
 
 # 6. Tests
 uv run pytest tests/unit/ -v                     # 12 unit (native ops, no GPU)
-uv run pytest tests/integration/ -v             # 40 integration (HTTP, mock Redis/ComfyUI)
+uv run pytest tests/integration/ -v             # 49 integration (HTTP, mock Redis/ComfyUI)
 uv run pytest tests/ -m "gpu" -v                # GPU-only (requires ComfyUI + models)
 ```
 
@@ -380,10 +380,10 @@ mediakit/
 │   │   └── audio/              ⚠️ placeholder (Phase 10)
 │   ├── jobs/
 │   │   ├── queue.py            ✅ arq enqueue / poll
-│   │   ├── worker.py           ✅ 13 arq tasks, max_jobs=1
+│   │   ├── worker.py           ✅ 14 arq tasks, max_jobs=1
 │   │   └── status.py           ✅ JobStatus enum
 │   ├── server/
-│   │   ├── app.py              ✅ FastAPI, 20 routes
+│   │   ├── app.py              ✅ FastAPI, 21 routes
 │   │   ├── deps.py             ✅ bearer auth
 │   │   ├── utils.py            ✅ save_upload
 │   │   └── routes/
@@ -392,7 +392,7 @@ mediakit/
 │   │       ├── jobs.py         ✅ async AI ops + polling
 │   │       └── pipelines.py    ✅ pipeline endpoints
 │   ├── cli/
-│   │   ├── main.py             ✅ Typer app, 11 commands
+│   │   ├── main.py             ✅ Typer app, 13 commands (11 media + serve + worker)
 │   │   └── commands/
 │   ├── schemas/
 │   │   ├── ops.py              ✅ native op params/results
@@ -404,7 +404,7 @@ mediakit/
 │   └── logging.py              ✅ structlog
 ├── tests/
 │   ├── unit/                   ✅ 12 tests (native ops, no GPU)
-│   └── integration/            ✅ 40 tests (HTTP layer, mocked Redis/ComfyUI)
+│   └── integration/            ✅ 49 tests (HTTP layer, mocked Redis/ComfyUI)
 ├── lab/                        experiment runner + presets
 ├── scripts/                    utility scripts
 ├── docs/deploy/                systemd unit files

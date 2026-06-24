@@ -28,6 +28,9 @@ lab/
 *.gif
 *.webm
 
+# Audio outputs (audio backend is a reserved Phase-10 placeholder — no results committed)
+*.wav
+
 # examples/ holds a small, curated set of showcase assets committed on purpose
 # (distinct from output/, which is bulk script output and never committed)
 !examples/
