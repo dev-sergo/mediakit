@@ -27,6 +27,27 @@ All generated on a single RTX 3090 (24 GB). More in [`examples/`](examples/).
 | ![flower field](examples/covers/flower-field.jpg) | ![waterfall](examples/covers/waterfall.jpg) |
 | ![temple](examples/covers/temple.jpg) | ![zipline](examples/covers/zipline.jpg) |
 
+### Image pipelines — `responsive_set` (compress → variants → lqip)
+
+Native, **no GPU**: one source image → a responsive WebP/AVIF width ladder plus a
+tiny inline LQIP blur placeholder. Runs in-process via Pillow in under a second.
+
+The 123-byte LQIP placeholder (left — an upscaled 16×8 WebP) renders instantly as a
+Next.js `blurDataURL` while the full image (right) loads:
+
+![lqip blur placeholder vs full image](examples/responsive/lqip-blur-vs-full.jpg)
+
+Responsive WebP ladder from a 167 KB / 1200 px source — smaller screens fetch less:
+
+| Variant | WebP |
+|---|---|
+| 640w | 48 KB |
+| 768w | 68 KB |
+| 1024w | 109 KB |
+
+> AVIF variants are emitted alongside WebP for format negotiation. Regenerate with
+> `mediakit variants photo.jpg --formats webp,avif` or the `responsive_set` pipeline.
+
 ### Video — `txt2video` / `img2video` (LTX-Video)
 
 | | |

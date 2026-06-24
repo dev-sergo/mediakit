@@ -51,10 +51,10 @@ output but show **none** of it. Run each, commit curated results to `examples/`,
 README Gallery.
 
 - [ ] `product_shot` — run on 2–3 product photos; show bg-remove → contact-shadow → gradient-bg → upscale. Commit before/after pair.
-- [ ] `responsive_set` — show one source → the 640/768/1024/1280/1536 WebP/AVIF variants + the LQIP blur placeholder (visualize the blur).
+- [x] `responsive_set` — **native, no-GPU**; done on the Mac. Curated `examples/responsive/lqip-blur-vs-full.jpg` (123-byte LQIP placeholder vs full image) + a WebP width-ladder table in the README. (Source covers are 1200 px, so the ladder tops out at 1024w; AVIF runs larger than WebP on these already-compressed JPEGs, so the table shows WebP only.)
 - [ ] `photo_finalize` — marketplace-ready before/after (bg-remove → upscale → compress).
 - [ ] `upscale` — a tight crop comparison (input vs 4×) so the detail gain is visible.
-- [ ] Add an **"Image pipelines"** subsection to the README Gallery with these.
+- [~] Add an **"Image pipelines"** subsection to the README Gallery with these. (Created, currently covers `responsive_set`; product_shot/photo_finalize/upscale entries pending GPU.)
 - [ ] Keep `examples/` curated — pick the best 1–2 per pipeline, not bulk `output/`.
 
 **Payoff:** turns "we have 8 pipelines" (told) into "look what they do" (shown). Directly
