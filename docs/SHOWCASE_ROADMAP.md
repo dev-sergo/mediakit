@@ -39,8 +39,8 @@ Fixes from the 2026-06-24 audit. Pure credibility, no code logic.
 - [x] `docs/DOCS.md` — drift in the architecture tree: `13 arq tasks` → **14**, `20 routes` → **21**, commands recounted → **13** (11 media + serve + worker). (Implementation-status section was already correct at 14/21.)
 - [x] `docs/DOCS.md` API section — `txt2video` route lists `model(ltxv|wan)`; added **`cogvideox`** to match the schema.
 - [x] Decide on stray `output.wav` in repo root — not present and untracked; added `*.wav` to `.gitignore` as a guard (audio is reserved Phase-10).
-- [ ] (optional) Add `CHANGELOG.md` with a first entry: Gallery, `examples/`, `seamless_video`, CogVideoX.
-- [ ] (optional) Add `SECURITY.md`.
+- [x] (optional) Add `CHANGELOG.md` with a first entry: Gallery, `examples/`, `seamless_video`, CogVideoX. — CogVideoX entry kept honest (still pending GPU verification).
+- [x] (optional) Add `SECURITY.md`. — Minimal policy: private GitHub reporting + deployment trust-boundary notes.
 
 ---
 
