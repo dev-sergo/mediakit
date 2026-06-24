@@ -37,6 +37,7 @@ app.add_typer(img2video.app, name="img2video")
 def serve_cmd() -> None:
     """Start the HTTP server (same as mediakit-server entrypoint)."""
     from mediakit.server.app import main as _main
+
     _main()
 
 
@@ -44,6 +45,7 @@ def serve_cmd() -> None:
 def worker_cmd() -> None:
     """Start the arq worker (same as mediakit-worker entrypoint)."""
     from mediakit.jobs.worker import main as _main
+
     _main()
 
 

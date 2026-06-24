@@ -24,6 +24,7 @@ VERIFY on GPU box:
 Length note (LTX constraint): valid values are 9 + 8*n (9, 17, 25, 33, 49, 65, 97, 161...).
 Frame rate note: 24 fps for cinematic, 25 fps to match ltxv default.
 """
+
 from __future__ import annotations
 
 import secrets
@@ -41,7 +42,7 @@ class LtxvTxt2VideoParams:
     clip_name: str = "t5xxl_fp8_e4m3fn.safetensors"
     width: int = 768
     height: int = 512
-    length: int = 49       # frames — must be 9+8n
+    length: int = 49  # frames — must be 9+8n
     fps: float = 24.0
     steps: int = 15
     cfg: float = 2.5

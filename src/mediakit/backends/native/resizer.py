@@ -1,4 +1,3 @@
-
 from PIL import Image
 
 from mediakit.schemas.ops import ResizeMode
@@ -66,9 +65,7 @@ def _fit(img: Image.Image, width: int, height: int) -> Image.Image:
     return img
 
 
-def _pad(
-    img: Image.Image, width: int, height: int, color: tuple[int, int, int]
-) -> Image.Image:
+def _pad(img: Image.Image, width: int, height: int, color: tuple[int, int, int]) -> Image.Image:
     img = _fit(img.copy(), width, height)
     canvas = Image.new("RGB", (width, height), color)
     offset = ((width - img.width) // 2, (height - img.height) // 2)

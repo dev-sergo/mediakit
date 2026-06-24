@@ -3,6 +3,7 @@
 POST enqueues the job → returns 202 + job_id.
 GET  /v1/jobs/{id} → polls status + result when done.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -27,6 +28,7 @@ class JobAccepted(BaseModel):
 
 # ─── Enqueue endpoints ────────────────────────────────────────────────────────
 
+
 @router.post("/v1/ops/txt2img", status_code=status.HTTP_202_ACCEPTED)
 async def enqueue_txt2img(
     prompt: Annotated[str, Form()],
@@ -40,12 +42,21 @@ async def enqueue_txt2img(
     checkpoint: Annotated[str, Form()] = "RealVisXL_V5.0_inpainting.safetensors",
 ) -> JobAccepted:
     import secrets as _sec
+
     actual_seed = _sec.randbits(32) if seed == -1 else seed
     job_id = await enqueue(
         "task_txt2img",
-        {"prompt": prompt, "negative_prompt": negative, "backend": backend,
-         "width": width, "height": height,
-         "steps": steps, "cfg": cfg, "seed": actual_seed, "checkpoint": checkpoint},
+        {
+            "prompt": prompt,
+            "negative_prompt": negative,
+            "backend": backend,
+            "width": width,
+            "height": height,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": actual_seed,
+            "checkpoint": checkpoint,
+        },
     )
     return JobAccepted(job_id=job_id)
 
@@ -65,14 +76,24 @@ async def enqueue_img_edit(
     lora_strength: Annotated[float, Form()] = 1.0,
 ) -> JobAccepted:
     import secrets as _sec
+
     src = save_upload(file)
     actual_seed = _sec.randbits(32) if seed == -1 else seed
     job_id = await enqueue(
         "task_img_edit",
-        {"input": src, "prompt": prompt, "negative_prompt": negative,
-         "backend": backend, "width": width, "height": height,
-         "steps": steps, "cfg": cfg, "seed": actual_seed,
-         "mask_target": mask, "lora_strength": lora_strength},
+        {
+            "input": src,
+            "prompt": prompt,
+            "negative_prompt": negative,
+            "backend": backend,
+            "width": width,
+            "height": height,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": actual_seed,
+            "mask_target": mask,
+            "lora_strength": lora_strength,
+        },
     )
     return JobAccepted(job_id=job_id)
 
@@ -88,8 +109,10 @@ async def enqueue_bg_remove(
     job_id = await enqueue(
         "task_bg_remove",
         {
-            "input": src, "model": model.value,
-            "background_mode": background, "background_color": color,
+            "input": src,
+            "model": model.value,
+            "background_mode": background,
+            "background_color": color,
         },
     )
     return JobAccepted(job_id=job_id)
@@ -111,6 +134,7 @@ async def enqueue_upscale(
 
 # ─── Video ops ───────────────────────────────────────────────────────────────
 
+
 @router.post("/v1/ops/txt2video", status_code=status.HTTP_202_ACCEPTED)
 async def enqueue_txt2video(
     prompt: Annotated[str, Form()],
@@ -126,9 +150,18 @@ async def enqueue_txt2video(
 ) -> JobAccepted:
     job_id = await enqueue(
         "task_txt2video",
-        {"prompt": prompt, "negative_prompt": negative, "model": model,
-         "width": width, "height": height, "length": length, "fps": fps,
-         "steps": steps, "cfg": cfg, "seed": seed},
+        {
+            "prompt": prompt,
+            "negative_prompt": negative,
+            "model": model,
+            "width": width,
+            "height": height,
+            "length": length,
+            "fps": fps,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": seed,
+        },
     )
     return JobAccepted(job_id=job_id)
 
@@ -149,14 +182,24 @@ async def enqueue_img2video(
     src = save_upload(file)
     job_id = await enqueue(
         "task_img2video",
-        {"input": str(src), "prompt": prompt, "negative_prompt": negative,
-         "width": width, "height": height, "length": length, "fps": fps,
-         "steps": steps, "cfg": cfg, "seed": seed},
+        {
+            "input": str(src),
+            "prompt": prompt,
+            "negative_prompt": negative,
+            "width": width,
+            "height": height,
+            "length": length,
+            "fps": fps,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": seed,
+        },
     )
     return JobAccepted(job_id=job_id)
 
 
 # ─── Job status polling ───────────────────────────────────────────────────────
+
 
 @router.get("/v1/jobs/{job_id}")
 async def get_job(job_id: str) -> dict[str, Any]:

@@ -23,6 +23,7 @@ VERIFY on GPU box:
 
 Length note: Wan uses multiples of 4+1 (5, 9, 17, 25, 33, 49, 65, 81...).
 """
+
 from __future__ import annotations
 
 import secrets
@@ -43,7 +44,7 @@ class WanTxt2VideoParams:
     vae_name: str = "split_files/vae/wan_2.1_vae.safetensors"
     width: int = 832
     height: int = 480
-    length: int = 49       # frames — multiples of 4+1
+    length: int = 49  # frames — multiples of 4+1
     fps: float = 16.0
     steps: int = 20
     cfg: float = 6.5

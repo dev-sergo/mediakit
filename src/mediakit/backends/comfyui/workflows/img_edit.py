@@ -7,6 +7,7 @@ while keeping the subject pixel-perfect.
   CheckpointLoaderSimple → CLIPTextEncode ×2
   KSampler → VAEDecode → SaveImage
 """
+
 from __future__ import annotations
 
 import secrets

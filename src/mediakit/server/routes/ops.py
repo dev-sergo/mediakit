@@ -2,6 +2,7 @@
 
 These run in-process (Pillow, no GPU) and return immediately.
 """
+
 from __future__ import annotations
 
 from typing import Annotated, Any

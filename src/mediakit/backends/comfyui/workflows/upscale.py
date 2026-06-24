@@ -6,6 +6,7 @@ ESRGAN models always produce 4×. Lower target scales are achieved by
 lanczos-downscaling after — preserves the detail-recovery benefit of the
 upscaler while landing on a sensible final size.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

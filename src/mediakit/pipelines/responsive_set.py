@@ -1,4 +1,5 @@
 """responsive_set pipeline — compress → variants(webp+avif) → lqip."""
+
 from __future__ import annotations
 
 import tempfile
@@ -41,19 +42,23 @@ class ResponsiveSetPipeline(BasePipeline):
         with tempfile.TemporaryDirectory() as _tmp:
             # 1. Compress to a temp location — variants and lqip use it, then it's discarded
             compressed = Path(_tmp) / f"{input.stem}_compressed{input.suffix}"
-            await compress(CompressParams(
-                input=input, output=compressed, format=ImageFormat.jpeg, quality=quality
-            ))
+            await compress(
+                CompressParams(
+                    input=input, output=compressed, format=ImageFormat.jpeg, quality=quality
+                )
+            )
 
             # 2. Responsive variants (written to out_dir, not tmp)
-            vresult = await make_variants(VariantsParams(
-                input=compressed,
-                output_dir=out_dir,
-                widths=widths,
-                formats=formats,
-                quality=quality,
-                stem=input.stem,
-            ))
+            vresult = await make_variants(
+                VariantsParams(
+                    input=compressed,
+                    output_dir=out_dir,
+                    widths=widths,
+                    formats=formats,
+                    quality=quality,
+                    stem=input.stem,
+                )
+            )
 
             # 3. LQIP
             lqip_path: Path | None = None

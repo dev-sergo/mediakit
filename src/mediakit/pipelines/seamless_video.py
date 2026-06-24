@@ -15,6 +15,7 @@ Strategy (native window + continuation):
 
 This is model-agnostic: it works with ltxv, cogvideox, and (crossfade-only) wan.
 """
+
 from __future__ import annotations
 
 import math
@@ -45,9 +46,9 @@ class SeamlessVideoPipeline(BasePipeline):
         negative_prompt: str = "",
         output_dir: Path,
         model: Literal["ltxv", "wan", "cogvideox"] = "cogvideox",
-        input: Path | None = None,           # optional first-frame image (img2video start)
+        input: Path | None = None,  # optional first-frame image (img2video start)
         total_frames: int = 97,
-        fps: float | None = None,            # default: model-native fps
+        fps: float | None = None,  # default: model-native fps
         width: int | None = None,
         height: int | None = None,
         overlap_frames: int = 8,
@@ -78,23 +79,48 @@ class SeamlessVideoPipeline(BasePipeline):
             final = output_dir / "video.mp4"
             if start_with_image:
                 assert input is not None
-                vid = await img2video(Img2VideoParams(
-                    input=input, prompt=prompt, negative_prompt=negative_prompt,
-                    model=i2v_model, width=w, height=h, length=length, fps=eff_fps,
-                    steps=steps, cfg=cfg, seed=seed, output=final,
-                ))
+                vid = await img2video(
+                    Img2VideoParams(
+                        input=input,
+                        prompt=prompt,
+                        negative_prompt=negative_prompt,
+                        model=i2v_model,
+                        width=w,
+                        height=h,
+                        length=length,
+                        fps=eff_fps,
+                        steps=steps,
+                        cfg=cfg,
+                        seed=seed,
+                        output=final,
+                    )
+                )
             else:
-                vid = await txt2video(Txt2VideoParams(
-                    prompt=prompt, negative_prompt=negative_prompt, model=model,
-                    width=w, height=h, length=length, fps=eff_fps,
-                    steps=steps, cfg=cfg, seed=seed, output=final,
-                ))
+                vid = await txt2video(
+                    Txt2VideoParams(
+                        prompt=prompt,
+                        negative_prompt=negative_prompt,
+                        model=model,
+                        width=w,
+                        height=h,
+                        length=length,
+                        fps=eff_fps,
+                        steps=steps,
+                        cfg=cfg,
+                        seed=seed,
+                        output=final,
+                    )
+                )
             log.info("seamless_video.single_window", frames=length, seam_free=True)
             return PipelineResult(
                 outputs=[vid.output],
                 meta={
-                    "segments": 1, "seam_free": True, "seed": vid.seed,
-                    "duration_s": vid.duration_s, "model": model, "fps": eff_fps,
+                    "segments": 1,
+                    "seam_free": True,
+                    "seed": vid.seed,
+                    "duration_s": vid.duration_s,
+                    "model": model,
+                    "fps": eff_fps,
                 },
             )
 
@@ -104,8 +130,12 @@ class SeamlessVideoPipeline(BasePipeline):
         n_segments = 1 + math.ceil((total_frames - seg_len) / new_per_seg)
         log.info(
             "seamless_video.plan",
-            model=model, total_frames=total_frames, seg_len=seg_len,
-            overlap=overlap, segments=n_segments, continuation=can_continue,
+            model=model,
+            total_frames=total_frames,
+            seg_len=seg_len,
+            overlap=overlap,
+            segments=n_segments,
+            continuation=can_continue,
         )
 
         segments: list[Path] = []
@@ -115,17 +145,38 @@ class SeamlessVideoPipeline(BasePipeline):
         seg0 = output_dir / "seg_000.mp4"
         if start_with_image:
             assert input is not None
-            v0 = await img2video(Img2VideoParams(
-                input=input, prompt=prompt, negative_prompt=negative_prompt,
-                model=i2v_model, width=w, height=h, length=seg_len, fps=eff_fps,
-                steps=steps, cfg=cfg, seed=seg_seed(0), output=seg0,
-            ))
+            v0 = await img2video(
+                Img2VideoParams(
+                    input=input,
+                    prompt=prompt,
+                    negative_prompt=negative_prompt,
+                    model=i2v_model,
+                    width=w,
+                    height=h,
+                    length=seg_len,
+                    fps=eff_fps,
+                    steps=steps,
+                    cfg=cfg,
+                    seed=seg_seed(0),
+                    output=seg0,
+                )
+            )
         else:
-            v0 = await txt2video(Txt2VideoParams(
-                prompt=prompt, negative_prompt=negative_prompt, model=model,
-                width=w, height=h, length=seg_len, fps=eff_fps,
-                steps=steps, cfg=cfg, seed=seg_seed(0), output=seg0,
-            ))
+            v0 = await txt2video(
+                Txt2VideoParams(
+                    prompt=prompt,
+                    negative_prompt=negative_prompt,
+                    model=model,
+                    width=w,
+                    height=h,
+                    length=seg_len,
+                    fps=eff_fps,
+                    steps=steps,
+                    cfg=cfg,
+                    seed=seg_seed(0),
+                    output=seg0,
+                )
+            )
         segments.append(v0.output)
         seeds.append(v0.seed)
 
@@ -136,32 +187,58 @@ class SeamlessVideoPipeline(BasePipeline):
                 seed_frame = await extract_last_frame(
                     segments[-1], output_dir / f"seed_{i:03d}.png"
                 )
-                vi = await img2video(Img2VideoParams(
-                    input=seed_frame, prompt=prompt, negative_prompt=negative_prompt,
-                    model=i2v_model, width=w, height=h, length=seg_len, fps=eff_fps,
-                    steps=steps, cfg=cfg, seed=seg_seed(i), output=seg_path,
-                ))
+                vi = await img2video(
+                    Img2VideoParams(
+                        input=seed_frame,
+                        prompt=prompt,
+                        negative_prompt=negative_prompt,
+                        model=i2v_model,
+                        width=w,
+                        height=h,
+                        length=seg_len,
+                        fps=eff_fps,
+                        steps=steps,
+                        cfg=cfg,
+                        seed=seg_seed(i),
+                        output=seg_path,
+                    )
+                )
             else:
-                vi = await txt2video(Txt2VideoParams(
-                    prompt=prompt, negative_prompt=negative_prompt, model=model,
-                    width=w, height=h, length=seg_len, fps=eff_fps,
-                    steps=steps, cfg=cfg, seed=seg_seed(i), output=seg_path,
-                ))
+                vi = await txt2video(
+                    Txt2VideoParams(
+                        prompt=prompt,
+                        negative_prompt=negative_prompt,
+                        model=model,
+                        width=w,
+                        height=h,
+                        length=seg_len,
+                        fps=eff_fps,
+                        steps=steps,
+                        cfg=cfg,
+                        seed=seg_seed(i),
+                        output=seg_path,
+                    )
+                )
             segments.append(vi.output)
             seeds.append(vi.seed)
 
         # Stitch with a crossfade over the overlap
         final = output_dir / "video.mp4"
         await crossfade_concat(
-            segments, output=final, fps=eff_fps, overlap_s=overlap / eff_fps,
+            segments,
+            output=final,
+            fps=eff_fps,
+            overlap_s=overlap / eff_fps,
         )
 
         stitched_frames = seg_len * n_segments - overlap * (n_segments - 1)
         duration_s = round(stitched_frames / eff_fps, 2)
         log.info(
             "seamless_video.done",
-            segments=n_segments, frames=stitched_frames,
-            duration_s=duration_s, continuation=can_continue,
+            segments=n_segments,
+            frames=stitched_frames,
+            duration_s=duration_s,
+            continuation=can_continue,
         )
         return PipelineResult(
             outputs=[final, *segments],

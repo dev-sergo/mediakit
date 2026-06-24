@@ -2,6 +2,7 @@
 
 No ComfyUI or Redis needed — ops run in-process via Pillow.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,8 +13,8 @@ from fastapi.testclient import TestClient
 from mediakit.config import settings
 from mediakit.server.app import app
 
-
 # ─── compress ────────────────────────────────────────────────────────────────
+
 
 def test_compress_webp_returns_200(client: TestClient, jpeg_bytes: bytes) -> None:
     resp = client.post(
@@ -58,6 +59,7 @@ def test_compress_max_width(client: TestClient, jpeg_bytes: bytes) -> None:
 
 # ─── resize ──────────────────────────────────────────────────────────────────
 
+
 def test_resize_fit(client: TestClient, jpeg_bytes: bytes) -> None:
     resp = client.post(
         "/v1/ops/resize",
@@ -88,6 +90,7 @@ def test_resize_pad(client: TestClient, jpeg_bytes: bytes) -> None:
 
 # ─── convert ─────────────────────────────────────────────────────────────────
 
+
 def test_convert_png_to_webp(client: TestClient, png_bytes: bytes) -> None:
     resp = client.post(
         "/v1/ops/convert",
@@ -100,6 +103,7 @@ def test_convert_png_to_webp(client: TestClient, png_bytes: bytes) -> None:
 
 
 # ─── lqip ────────────────────────────────────────────────────────────────────
+
 
 def test_lqip_returns_data_url(client: TestClient, jpeg_bytes: bytes) -> None:
     resp = client.post(
@@ -123,6 +127,7 @@ def test_lqip_custom_size(client: TestClient, jpeg_bytes: bytes) -> None:
 
 
 # ─── variants ────────────────────────────────────────────────────────────────
+
 
 def test_variants_returns_list(client: TestClient, jpeg_bytes: bytes) -> None:
     resp = client.post(
@@ -150,9 +155,8 @@ def test_variants_multi_format(client: TestClient, jpeg_bytes: bytes) -> None:
 
 # ─── upload size limit ───────────────────────────────────────────────────────
 
-def test_upload_too_large_returns_413(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+
+def test_upload_too_large_returns_413(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "storage_uploads", tmp_path / "uploads")
     monkeypatch.setattr(settings, "storage_outputs", tmp_path / "outputs")
     monkeypatch.setattr(settings, "api_token", "")
@@ -168,6 +172,7 @@ def test_upload_too_large_returns_413(
 
 
 # ─── auth ────────────────────────────────────────────────────────────────────
+
 
 def test_auth_rejected_without_token(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, jpeg_bytes: bytes

@@ -2,6 +2,7 @@
 
 CheckpointLoaderSimple → CLIPTextEncode ×2 → EmptyLatentImage → KSampler → VAEDecode → SaveImage
 """
+
 from __future__ import annotations
 
 import secrets

@@ -115,7 +115,9 @@ class ComfyUIClient:
                     wait = 10 * (attempt + 1)
                     log.warning(
                         "comfyui.free_memory_retry",
-                        attempt=attempt + 1, wait_s=wait, error=str(exc),
+                        attempt=attempt + 1,
+                        wait_s=wait,
+                        error=str(exc),
                     )
                     await asyncio.sleep(wait)
                 else:

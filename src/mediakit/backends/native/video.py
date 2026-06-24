@@ -4,6 +4,7 @@ concatenation (ffmpeg). Used by the seamless_video pipeline to join segments.
 ffmpeg is assumed present (ComfyUI's VideoHelperSuite already depends on it).
 OpenCV (opencv-python-headless) is a hard dependency of mediakit.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -64,8 +65,14 @@ async def _run(cmd: list[str]) -> None:
 async def probe_duration(video: Path) -> float:
     """Return container duration in seconds via ffprobe."""
     proc = await asyncio.create_subprocess_exec(
-        "ffprobe", "-v", "error", "-show_entries", "format=duration",
-        "-of", "default=noprint_wrappers=1:nokey=1", str(video),
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "default=noprint_wrappers=1:nokey=1",
+        str(video),
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
@@ -94,10 +101,20 @@ async def crossfade_concat(
         raise ValueError("crossfade_concat requires at least one segment")
     if len(segments) == 1:
         # Nothing to blend — re-encode through to normalize the container.
-        await _run([
-            "ffmpeg", "-y", "-i", str(segments[0]),
-            "-c:v", "libx264", "-pix_fmt", "yuv420p", "-an", str(output),
-        ])
+        await _run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(segments[0]),
+                "-c:v",
+                "libx264",
+                "-pix_fmt",
+                "yuv420p",
+                "-an",
+                str(output),
+            ]
+        )
         return output
 
     durations = [await probe_duration(s) for s in segments]
@@ -109,9 +126,7 @@ async def crossfade_concat(
     # Normalize timebase/fps/pixel format so xfade gets consistent streams.
     filters: list[str] = []
     for i in range(len(segments)):
-        filters.append(
-            f"[{i}:v]fps={fps},format=yuv420p,setpts=PTS-STARTPTS[s{i}]"
-        )
+        filters.append(f"[{i}:v]fps={fps},format=yuv420p,setpts=PTS-STARTPTS[s{i}]")
 
     prev = "s0"
     elapsed = durations[0]
@@ -126,9 +141,15 @@ async def crossfade_concat(
         prev = label
 
     cmd += [
-        "-filter_complex", ";".join(filters),
-        "-map", "[out]",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-an",
+        "-filter_complex",
+        ";".join(filters),
+        "-map",
+        "[out]",
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-an",
         str(output),
     ]
     output.parent.mkdir(parents=True, exist_ok=True)

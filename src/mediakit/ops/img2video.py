@@ -33,31 +33,35 @@ async def img2video(params: Img2VideoParams) -> VideoResult:
         server_name = await comfy.upload_image(params.input)
 
         if params.model == "cogvideox":
-            workflow = build_cogvideox_img2video_workflow(CogVideoXImg2VideoParams(
-                positive_prompt=params.prompt,
-                negative_prompt=params.negative_prompt,
-                image_filename=server_name,
-                width=params.width,
-                height=params.height,
-                length=params.length,
-                fps=params.fps,
-                steps=params.steps,
-                cfg=params.cfg,
-                seed=seed,
-            ))
+            workflow = build_cogvideox_img2video_workflow(
+                CogVideoXImg2VideoParams(
+                    positive_prompt=params.prompt,
+                    negative_prompt=params.negative_prompt,
+                    image_filename=server_name,
+                    width=params.width,
+                    height=params.height,
+                    length=params.length,
+                    fps=params.fps,
+                    steps=params.steps,
+                    cfg=params.cfg,
+                    seed=seed,
+                )
+            )
         else:  # ltxv
-            workflow = build_ltxv_img2video_workflow(LtxvImg2VideoParams(
-                positive_prompt=params.prompt,
-                negative_prompt=params.negative_prompt,
-                image_filename=server_name,
-                width=params.width,
-                height=params.height,
-                length=params.length,
-                fps=params.fps,
-                steps=params.steps,
-                cfg=params.cfg,
-                seed=seed,
-            ))
+            workflow = build_ltxv_img2video_workflow(
+                LtxvImg2VideoParams(
+                    positive_prompt=params.prompt,
+                    negative_prompt=params.negative_prompt,
+                    image_filename=server_name,
+                    width=params.width,
+                    height=params.height,
+                    length=params.length,
+                    fps=params.fps,
+                    steps=params.steps,
+                    cfg=params.cfg,
+                    seed=seed,
+                )
+            )
 
         prompt_id = await comfy.submit_workflow(workflow)
         raw_outputs = await comfy.wait_for_result(prompt_id)
@@ -74,6 +78,9 @@ async def img2video(params: Img2VideoParams) -> VideoResult:
     duration_s = round(params.length / params.fps, 2)
     log.info(
         "img2video.done",
-        input=str(params.input), output=str(final), seed=seed, duration_s=duration_s,
+        input=str(params.input),
+        output=str(final),
+        seed=seed,
+        duration_s=duration_s,
     )
     return VideoResult(output=final, seed=seed, duration_s=duration_s)

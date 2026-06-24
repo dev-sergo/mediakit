@@ -26,6 +26,7 @@ def cmd(
     checkpoint: Annotated[str, typer.Option("--ckpt")] = "RealVisXL_V5.0_inpainting.safetensors",
 ) -> None:
     import secrets
+
     actual_seed = secrets.randbits(32) if seed == -1 else seed
     params = Txt2ImgParams(
         prompt=prompt,

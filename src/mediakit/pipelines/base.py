@@ -1,4 +1,5 @@
 """Base class for named pipelines — compositions of ops."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -17,5 +18,4 @@ class BasePipeline(ABC):
     name: str  # registry key, e.g. "article_cover"
 
     @abstractmethod
-    async def run(self, **kwargs: Any) -> PipelineResult:
-        ...
+    async def run(self, **kwargs: Any) -> PipelineResult: ...

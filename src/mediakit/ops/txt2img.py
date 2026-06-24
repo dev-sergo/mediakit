@@ -67,8 +67,16 @@ async def txt2img(params: Txt2ImgParams) -> Txt2ImgResult:
     shutil.copy2(raw_outputs[0], final)
     shutil.rmtree(tmp_dir, ignore_errors=True)
 
-    write_metadata(final, seed=seed, steps=params.steps, cfg=params.cfg,
-                   checkpoint=params.checkpoint, backend=params.backend,
-                   prompt=params.prompt, width=params.width, height=params.height)
+    write_metadata(
+        final,
+        seed=seed,
+        steps=params.steps,
+        cfg=params.cfg,
+        checkpoint=params.checkpoint,
+        backend=params.backend,
+        prompt=params.prompt,
+        width=params.width,
+        height=params.height,
+    )
     log.info("txt2img.done", output=str(final), seed=seed, backend=params.backend)
     return Txt2ImgResult(output=final, seed=seed)

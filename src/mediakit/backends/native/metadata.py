@@ -10,6 +10,7 @@ Strategy:
 Usage:
     write_metadata(path, seed=42, steps=25, cfg=7.5, checkpoint="...", prompt="...")
 """
+
 from __future__ import annotations
 
 import json
@@ -23,9 +24,9 @@ from PIL import Image, PngImagePlugin
 log = structlog.get_logger(__name__)
 
 _PNG_PREFIX = "mediakit:"
-_EXIF_IMAGE_DESCRIPTION = 0x010E   # visible in Finder "Description"
-_EXIF_USER_COMMENT      = 0x9286   # visible in Finder "More Info"
-_EXIF_DATE_TIME         = 0x0132
+_EXIF_IMAGE_DESCRIPTION = 0x010E  # visible in Finder "Description"
+_EXIF_USER_COMMENT = 0x9286  # visible in Finder "More Info"
+_EXIF_DATE_TIME = 0x0132
 
 
 def write_metadata(path: Path, **params: Any) -> None:

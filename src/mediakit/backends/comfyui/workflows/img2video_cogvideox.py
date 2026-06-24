@@ -24,6 +24,7 @@ Notes:
   - CogVideoDecode takes `vae` and `samples` only — no `pipeline` input.
   - model_id must be the I2V checkpoint ("THUDM/CogVideoX-5b-I2V").
 """
+
 from __future__ import annotations
 
 import secrets
@@ -36,7 +37,7 @@ WorkflowDict = dict[str, Any]
 @dataclass(frozen=True)
 class CogVideoXImg2VideoParams:
     positive_prompt: str
-    image_filename: str              # filename on ComfyUI server after upload
+    image_filename: str  # filename on ComfyUI server after upload
     negative_prompt: str = (
         "worst quality, blurry, jittery, distorted, morphing, deformed, watermark"
     )
@@ -45,7 +46,7 @@ class CogVideoXImg2VideoParams:
     precision: str = "bf16"
     width: int = 720
     height: int = 480
-    length: int = 49       # frames — must be 8n+1 for CogVideoX-5B
+    length: int = 49  # frames — must be 8n+1 for CogVideoX-5B
     fps: float = 8.0
     steps: int = 50
     cfg: float = 6.0

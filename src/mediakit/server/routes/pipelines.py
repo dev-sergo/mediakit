@@ -1,4 +1,5 @@
 """Pipeline endpoints — compositions of ops."""
+
 from __future__ import annotations
 
 from typing import Annotated
@@ -34,9 +35,14 @@ async def pipeline_article_cover(
     job_id = await enqueue(
         "task_pipeline_article_cover",
         {
-            "prompt": prompt, "slug": slug, "output_dir": output_dir,
-            "negative_prompt": negative, "backend": backend,
-            "steps": steps, "cfg": cfg, "seed": seed,
+            "prompt": prompt,
+            "slug": slug,
+            "output_dir": output_dir,
+            "negative_prompt": negative,
+            "backend": backend,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": seed,
             "responsive_widths": widths,
         },
     )
@@ -54,8 +60,10 @@ async def pipeline_photo_finalize(
     job_id = await enqueue(
         "task_pipeline_photo_finalize",
         {
-            "input": src, "output_dir": output_dir,
-            "background_mode": background_mode, "upscale_scale": upscale_scale,
+            "input": src,
+            "output_dir": output_dir,
+            "background_mode": background_mode,
+            "upscale_scale": upscale_scale,
         },
     )
     return JobAccepted(job_id=job_id)
@@ -71,8 +79,8 @@ async def pipeline_product_shot(
     do_upscale: Annotated[bool, Form()] = True,
     upscale_model: Annotated[str, Form()] = "nmkd",
     upscale_scale: Annotated[float, Form()] = 2.0,
-    formats: Annotated[str, Form()] = "",   # comma-separated, empty = webp
-    widths: Annotated[str, Form()] = "",    # comma-separated, empty = defaults
+    formats: Annotated[str, Form()] = "",  # comma-separated, empty = webp
+    widths: Annotated[str, Form()] = "",  # comma-separated, empty = defaults
     quality: Annotated[str, Form()] = "high",
 ) -> JobAccepted:
     src = save_upload(file)
@@ -222,8 +230,8 @@ async def pipeline_photo_animate(
 async def pipeline_responsive_set(
     file: Annotated[UploadFile, File()],
     output_dir: Annotated[str, Form()] = "",
-    sizes: Annotated[str, Form()] = "",        # comma-separated widths, empty = defaults
-    formats: Annotated[str, Form()] = "",      # comma-separated formats, empty = webp+avif
+    sizes: Annotated[str, Form()] = "",  # comma-separated widths, empty = defaults
+    formats: Annotated[str, Form()] = "",  # comma-separated formats, empty = webp+avif
     quality: Annotated[str, Form()] = "high",
     generate_lqip: Annotated[bool, Form()] = True,
 ) -> JobAccepted:

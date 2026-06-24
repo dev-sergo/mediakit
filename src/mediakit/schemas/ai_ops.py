@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 # ─── Background removal ───────────────────────────────────────────────────────
 
+
 class BiRefNetModel(StrEnum):
     hr = "BiRefNet-HR"
     hr_matting = "BiRefNet-HR-matting"
@@ -35,6 +36,7 @@ class BgRemoveResult(BaseModel):
 
 # ─── Upscale ──────────────────────────────────────────────────────────────────
 
+
 class UpscaleModel(StrEnum):
     nmkd = "4x_NMKD-Siax_200k.pth"
     realesrgan = "RealESRGAN_x4.pth"
@@ -52,6 +54,7 @@ class UpscaleResult(BaseModel):
 
 
 # ─── txt2img ─────────────────────────────────────────────────────────────────
+
 
 class Txt2ImgParams(BaseModel):
     prompt: str
@@ -77,6 +80,7 @@ class Txt2ImgResult(BaseModel):
 
 
 # ─── img_edit ────────────────────────────────────────────────────────────────
+
 
 class ImgEditParams(BaseModel):
     input: Path

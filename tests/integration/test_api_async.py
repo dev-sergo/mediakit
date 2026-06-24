@@ -2,17 +2,20 @@
 
 enqueue and get_job_result are mocked — no Redis connection needed.
 """
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
-
 # ─── AI ops — enqueue → 202 ──────────────────────────────────────────────────
 
+
 def test_txt2img_enqueues_job(client: TestClient) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-txt2img"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-txt2img"
+    ):
         resp = client.post("/v1/ops/txt2img", data={"prompt": "a sunset over the ocean"})
     assert resp.status_code == 202
     body = resp.json()
@@ -37,7 +40,9 @@ def test_txt2img_random_seed_when_minus_one(client: TestClient) -> None:
 
 
 def test_img_edit_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-edit"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-edit"
+    ):
         resp = client.post(
             "/v1/ops/img-edit",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -48,7 +53,9 @@ def test_img_edit_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
 
 
 def test_bg_remove_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-bg"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-bg"
+    ):
         resp = client.post(
             "/v1/ops/bg-remove",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -58,7 +65,9 @@ def test_bg_remove_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
 
 
 def test_upscale_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-up"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-up"
+    ):
         resp = client.post(
             "/v1/ops/upscale",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -69,6 +78,7 @@ def test_upscale_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
 
 # ─── Job polling ─────────────────────────────────────────────────────────────
 
+
 def test_get_job_queued_status(client: TestClient) -> None:
     mock_result = {
         "job_id": "job-123",
@@ -76,7 +86,11 @@ def test_get_job_queued_status(client: TestClient) -> None:
         "result": None,
         "enqueue_time": "2024-01-01T12:00:00",
     }
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=mock_result):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result",
+        new_callable=AsyncMock,
+        return_value=mock_result,
+    ):
         resp = client.get("/v1/jobs/job-123")
     assert resp.status_code == 200
     assert resp.json()["status"] == "queued"
@@ -90,22 +104,33 @@ def test_get_job_complete_with_result(client: TestClient) -> None:
         "result": {"output": "/storage/outputs/result.webp", "seed": 42},
         "enqueue_time": "2024-01-01T12:00:00",
     }
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=mock_result):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result",
+        new_callable=AsyncMock,
+        return_value=mock_result,
+    ):
         resp = client.get("/v1/jobs/job-456")
     assert resp.status_code == 200
     assert resp.json()["result"]["seed"] == 42
 
 
 def test_get_job_not_found_returns_404(client: TestClient) -> None:
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=None):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=None
+    ):
         resp = client.get("/v1/jobs/nonexistent-id")
     assert resp.status_code == 404
 
 
 # ─── Pipelines ───────────────────────────────────────────────────────────────
 
+
 def test_pipeline_article_cover_enqueues(client: TestClient) -> None:
-    with patch("mediakit.server.routes.pipelines.enqueue", new_callable=AsyncMock, return_value="pipe-cover"):
+    with patch(
+        "mediakit.server.routes.pipelines.enqueue",
+        new_callable=AsyncMock,
+        return_value="pipe-cover",
+    ):
         resp = client.post(
             "/v1/pipelines/article-cover",
             data={"prompt": "abstract tech background", "slug": "test-post", "output_dir": "/tmp"},
@@ -116,7 +141,9 @@ def test_pipeline_article_cover_enqueues(client: TestClient) -> None:
 
 
 def test_pipeline_photo_finalize_enqueues(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.pipelines.enqueue", new_callable=AsyncMock, return_value="pipe-fin"):
+    with patch(
+        "mediakit.server.routes.pipelines.enqueue", new_callable=AsyncMock, return_value="pipe-fin"
+    ):
         resp = client.post(
             "/v1/pipelines/photo-finalize",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -127,7 +154,9 @@ def test_pipeline_photo_finalize_enqueues(client: TestClient, jpeg_bytes: bytes)
 
 
 def test_pipeline_responsive_set_enqueues(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.pipelines.enqueue", new_callable=AsyncMock, return_value="pipe-rs"):
+    with patch(
+        "mediakit.server.routes.pipelines.enqueue", new_callable=AsyncMock, return_value="pipe-rs"
+    ):
         resp = client.post(
             "/v1/pipelines/responsive-set",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -138,6 +167,7 @@ def test_pipeline_responsive_set_enqueues(client: TestClient, jpeg_bytes: bytes)
 
 
 # ─── product_shot pipeline ───────────────────────────────────────────────────
+
 
 def test_pipeline_product_shot_enqueues(client: TestClient, jpeg_bytes: bytes) -> None:
     with patch(
@@ -208,6 +238,7 @@ def test_pipeline_product_shot_custom_params(client: TestClient, jpeg_bytes: byt
 
 # ─── txt_to_video_hq pipeline ────────────────────────────────────────────────
 
+
 def test_pipeline_txt_to_video_hq_enqueues(client: TestClient) -> None:
     with patch(
         "mediakit.server.routes.pipelines.enqueue",
@@ -275,6 +306,7 @@ def test_pipeline_txt_to_video_hq_flux_backend(client: TestClient) -> None:
 
 
 # ─── photo_animate pipeline ──────────────────────────────────────────────────
+
 
 def test_pipeline_photo_animate_enqueues(client: TestClient, jpeg_bytes: bytes) -> None:
     with patch(
@@ -351,8 +383,11 @@ def test_pipeline_photo_animate_with_bg_remove(client: TestClient, jpeg_bytes: b
 
 # ─── Video ops ───────────────────────────────────────────────────────────────
 
+
 def test_txt2video_enqueues_job(client: TestClient) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-t2v"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-t2v"
+    ):
         resp = client.post("/v1/ops/txt2video", data={"prompt": "Bangkok night market"})
     assert resp.status_code == 202
     assert resp.json()["job_id"] == "job-t2v"
@@ -373,7 +408,9 @@ def test_txt2video_default_model_is_ltxv(client: TestClient) -> None:
 
 
 def test_img2video_enqueues_job(client: TestClient, jpeg_bytes: bytes) -> None:
-    with patch("mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-i2v"):
+    with patch(
+        "mediakit.server.routes.jobs.enqueue", new_callable=AsyncMock, return_value="job-i2v"
+    ):
         resp = client.post(
             "/v1/ops/img2video",
             files={"file": ("photo.jpg", jpeg_bytes, "image/jpeg")},
@@ -416,8 +453,11 @@ def test_img_edit_backend_qwen_enqueues(client: TestClient, jpeg_bytes: bytes) -
 
 # ─── Output download endpoint ────────────────────────────────────────────────
 
-def test_get_job_output_returns_file(client: TestClient, tmp_path: "Path") -> None:  # noqa: F821
-    import tempfile, pathlib
+
+def test_get_job_output_returns_file(client: TestClient, tmp_path: Path) -> None:  # noqa: F821
+    import pathlib
+    import tempfile
+
     # Create a real temp file to serve
     f = pathlib.Path(tempfile.mktemp(suffix=".jpg"))
     f.write_bytes(b"\xff\xd8\xff" + b"\x00" * 50)  # minimal JPEG header
@@ -428,7 +468,11 @@ def test_get_job_output_returns_file(client: TestClient, tmp_path: "Path") -> No
             "result": {"output": str(f), "seed": 42},
             "enqueue_time": "2024-01-01T12:00:00",
         }
-        with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=mock_result):
+        with patch(
+            "mediakit.server.routes.jobs.get_job_result",
+            new_callable=AsyncMock,
+            return_value=mock_result,
+        ):
             resp = client.get("/v1/jobs/job-out/output")
         assert resp.status_code == 200
         assert resp.headers["content-disposition"].startswith("attachment")
@@ -443,13 +487,19 @@ def test_get_job_output_409_when_not_complete(client: TestClient) -> None:
         "result": None,
         "enqueue_time": "2024-01-01T12:00:00",
     }
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=mock_result):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result",
+        new_callable=AsyncMock,
+        return_value=mock_result,
+    ):
         resp = client.get("/v1/jobs/job-q/output")
     assert resp.status_code == 409
 
 
 def test_get_job_output_404_when_job_missing(client: TestClient) -> None:
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=None):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=None
+    ):
         resp = client.get("/v1/jobs/gone/output")
     assert resp.status_code == 404
 
@@ -461,6 +511,10 @@ def test_get_job_output_410_when_file_deleted(client: TestClient) -> None:
         "result": {"output": "/nonexistent/file.jpg"},
         "enqueue_time": "2024-01-01T12:00:00",
     }
-    with patch("mediakit.server.routes.jobs.get_job_result", new_callable=AsyncMock, return_value=mock_result):
+    with patch(
+        "mediakit.server.routes.jobs.get_job_result",
+        new_callable=AsyncMock,
+        return_value=mock_result,
+    ):
         resp = client.get("/v1/jobs/job-del/output")
     assert resp.status_code == 410

@@ -12,6 +12,7 @@ VERIFY on GPU box:
   - LoadImage node name: might need the image to be uploaded first via ComfyUI upload API.
     mediakit client handles this via comfy.upload_image().
 """
+
 from __future__ import annotations
 
 import secrets
@@ -24,7 +25,7 @@ WorkflowDict = dict[str, Any]
 @dataclass(frozen=True)
 class LtxvImg2VideoParams:
     positive_prompt: str
-    image_filename: str              # filename on ComfyUI server after upload
+    image_filename: str  # filename on ComfyUI server after upload
     negative_prompt: str = "worst quality, blurry, jittery, distorted, morphing, deformed"
     checkpoint: str = "LTXV/ltxv-13b-0.9.8-distilled-fp8.safetensors"
     clip_name: str = "t5xxl_fp8_e4m3fn.safetensors"
@@ -34,7 +35,7 @@ class LtxvImg2VideoParams:
     fps: float = 24.0
     steps: int = 15
     cfg: float = 2.0
-    strength: float = 0.9           # animation strength (0.5=subtle, 0.9=strong)
+    strength: float = 0.9  # animation strength (0.5=subtle, 0.9=strong)
     seed: int = field(default_factory=lambda: secrets.randbits(32))
     max_shift: float = 2.05
     base_shift: float = 0.95
@@ -93,7 +94,9 @@ def build_ltxv_img2video_workflow(params: LtxvImg2VideoParams) -> WorkflowDict:
     nodes["8"] = {
         "class_type": "ModelSamplingLTXV",
         "inputs": {
-            "model": ["1", 0], "max_shift": params.max_shift, "base_shift": params.base_shift
+            "model": ["1", 0],
+            "max_shift": params.max_shift,
+            "base_shift": params.base_shift,
         },
     }
     nodes["9"] = {

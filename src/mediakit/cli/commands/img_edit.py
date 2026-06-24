@@ -29,6 +29,7 @@ def cmd(
     ] = 1.0,
 ) -> None:
     import secrets
+
     actual_seed = secrets.randbits(32) if seed == -1 else seed
     params = ImgEditParams(
         input=input,

@@ -5,6 +5,7 @@ bg_remove → contact_shadow (native Pillow) → composite → [upscale →] var
 E-commerce product photo: cut out subject, add a contact shadow (blurred oval
 at the base of the object), composite onto a clean gradient background.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -44,7 +45,7 @@ def _make_gradient_bg(
     for y in range(small):
         for x in range(small):
             d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
-            d_max = (cx ** 2 + cy ** 2) ** 0.5
+            d_max = (cx**2 + cy**2) ** 0.5
             if pix is not None:
                 pix[x, y] = int(min(d / d_max * 255 * strength * 2, 255))
     vignette = sm.resize(size, Image.Resampling.BILINEAR)
@@ -154,21 +155,27 @@ class ProductShotPipeline(BasePipeline):
 
         # 1. Remove background → transparent PNG
         log.info("product_shot.bg_remove", input=str(input))
-        bg = await bg_remove(BgRemoveParams(
-            input=input,
-            output=out_dir / f"{stem}_nobg.png",
-            model=birefnet_model,
-            background_mode="transparent",
-        ))
+        bg = await bg_remove(
+            BgRemoveParams(
+                input=input,
+                output=out_dir / f"{stem}_nobg.png",
+                model=birefnet_model,
+                background_mode="transparent",
+            )
+        )
         outputs.append(bg.output)
 
         # 2. Composite: gradient bg + contact shadow + subject
         bg_png = out_dir / f"{stem}_bg.png"
         log.info("product_shot.composite", color=bg_color, shadow_opacity=shadow_opacity)
         _composite(
-            bg.output, bg_png,
-            _hex_to_rgb(bg_color), padding_pct, gradient_strength,
-            shadow_opacity, shadow_blur,
+            bg.output,
+            bg_png,
+            _hex_to_rgb(bg_color),
+            padding_pct,
+            gradient_strength,
+            shadow_opacity,
+            shadow_blur,
         )
         outputs.append(bg_png)
         current = bg_png
@@ -176,25 +183,29 @@ class ProductShotPipeline(BasePipeline):
         # 3. Optional upscale
         if do_upscale:
             log.info("product_shot.upscale", scale=upscale_scale)
-            up = await upscale(UpscaleParams(
-                input=current,
-                output=out_dir / f"{stem}_upscaled.png",
-                model=upscale_model,
-                scale=upscale_scale,
-            ))
+            up = await upscale(
+                UpscaleParams(
+                    input=current,
+                    output=out_dir / f"{stem}_upscaled.png",
+                    model=upscale_model,
+                    scale=upscale_scale,
+                )
+            )
             current = up.output
             outputs.append(current)
 
         # 4. Responsive variant set
         log.info("product_shot.variants")
-        vresult = await make_variants(VariantsParams(
-            input=current,
-            output_dir=out_dir,
-            widths=widths or _DEFAULT_WIDTHS,
-            formats=formats or _DEFAULT_FORMATS,
-            quality=quality,
-            stem=stem,
-        ))
+        vresult = await make_variants(
+            VariantsParams(
+                input=current,
+                output_dir=out_dir,
+                widths=widths or _DEFAULT_WIDTHS,
+                formats=formats or _DEFAULT_FORMATS,
+                quality=quality,
+                stem=stem,
+            )
+        )
         outputs.extend(v.path for v in vresult.variants)
 
         log.info("product_shot.done", files=len(outputs), variants=len(vresult.variants))

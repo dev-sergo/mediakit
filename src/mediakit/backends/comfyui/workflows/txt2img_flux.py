@@ -27,6 +27,7 @@ Flux parameter ranges:
   sampler:  euler    (not dpmpp)
   scheduler: simple  (not karras)
 """
+
 from __future__ import annotations
 
 import secrets
@@ -47,7 +48,7 @@ class Txt2ImgFluxWorkflowParams:
     height: int = 1024
     steps: int = 20
     guidance: float = 3.5
-    max_shift: float = 1.15   # Flux timestep shift — 1.15 for ≥1MP
+    max_shift: float = 1.15  # Flux timestep shift — 1.15 for ≥1MP
     base_shift: float = 0.5
     seed: int = field(default_factory=lambda: secrets.randbits(32))
     batch_size: int = 1
@@ -144,7 +145,7 @@ def build_txt2img_flux_workflow(params: Txt2ImgFluxWorkflowParams) -> WorkflowDi
         "class_type": "BasicGuider",
         "inputs": {
             "model": ["7", 0],
-            "conditioning": ["5", 0],   # FluxGuidance output
+            "conditioning": ["5", 0],  # FluxGuidance output
         },
     }
 

@@ -35,41 +35,47 @@ async def txt2video(params: Txt2VideoParams) -> VideoResult:
         settings.comfyui_url, output_dir=tmp_dir, timeout_seconds=timeout
     ) as comfy:
         if params.model == "cogvideox":
-            workflow = build_cogvideox_txt2video_workflow(CogVideoXTxt2VideoParams(
-                positive_prompt=params.prompt,
-                negative_prompt=params.negative_prompt,
-                width=params.width,
-                height=params.height,
-                length=params.length,
-                fps=params.fps,
-                steps=params.steps,
-                cfg=params.cfg,
-                seed=seed,
-            ))
+            workflow = build_cogvideox_txt2video_workflow(
+                CogVideoXTxt2VideoParams(
+                    positive_prompt=params.prompt,
+                    negative_prompt=params.negative_prompt,
+                    width=params.width,
+                    height=params.height,
+                    length=params.length,
+                    fps=params.fps,
+                    steps=params.steps,
+                    cfg=params.cfg,
+                    seed=seed,
+                )
+            )
         elif params.model == "wan":
-            workflow = build_wan_txt2video_workflow(WanTxt2VideoParams(
-                positive_prompt=params.prompt,
-                negative_prompt=params.negative_prompt,
-                width=params.width,
-                height=params.height,
-                length=params.length,
-                fps=params.fps,
-                steps=params.steps,
-                cfg=params.cfg,
-                seed=seed,
-            ))
+            workflow = build_wan_txt2video_workflow(
+                WanTxt2VideoParams(
+                    positive_prompt=params.prompt,
+                    negative_prompt=params.negative_prompt,
+                    width=params.width,
+                    height=params.height,
+                    length=params.length,
+                    fps=params.fps,
+                    steps=params.steps,
+                    cfg=params.cfg,
+                    seed=seed,
+                )
+            )
         else:  # ltxv
-            workflow = build_ltxv_txt2video_workflow(LtxvTxt2VideoParams(
-                positive_prompt=params.prompt,
-                negative_prompt=params.negative_prompt,
-                width=params.width,
-                height=params.height,
-                length=params.length,
-                fps=params.fps,
-                steps=params.steps,
-                cfg=params.cfg,
-                seed=seed,
-            ))
+            workflow = build_ltxv_txt2video_workflow(
+                LtxvTxt2VideoParams(
+                    positive_prompt=params.prompt,
+                    negative_prompt=params.negative_prompt,
+                    width=params.width,
+                    height=params.height,
+                    length=params.length,
+                    fps=params.fps,
+                    steps=params.steps,
+                    cfg=params.cfg,
+                    seed=seed,
+                )
+            )
 
         prompt_id = await comfy.submit_workflow(workflow)
         raw_outputs = await comfy.wait_for_result(prompt_id)
@@ -87,6 +93,9 @@ async def txt2video(params: Txt2VideoParams) -> VideoResult:
     duration_s = round(params.length / params.fps, 2)
     log.info(
         "txt2video.done",
-        output=str(final), seed=seed, model=params.model, duration_s=duration_s,
+        output=str(final),
+        seed=seed,
+        model=params.model,
+        duration_s=duration_s,
     )
     return VideoResult(output=final, seed=seed, duration_s=duration_s)

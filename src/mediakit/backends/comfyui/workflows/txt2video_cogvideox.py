@@ -21,6 +21,7 @@ Notes:
   - CogVideoDecode takes `vae` (output 1 of model loader) and `samples` only —
     no `pipeline` input.
 """
+
 from __future__ import annotations
 
 import secrets
@@ -33,16 +34,14 @@ WorkflowDict = dict[str, Any]
 @dataclass(frozen=True)
 class CogVideoXTxt2VideoParams:
     positive_prompt: str
-    negative_prompt: str = (
-        "worst quality, blurry, jittery, distorted, watermark, text, low quality"
-    )
+    negative_prompt: str = "worst quality, blurry, jittery, distorted, watermark, text, low quality"
     model_id: str = "THUDM/CogVideoX-5b"
     clip_name: str = "t5xxl_fp8_e4m3fn.safetensors"
     precision: str = "bf16"
     width: int = 720
     height: int = 480
-    length: int = 49       # frames — must be 8n+1 for CogVideoX-5B
-    fps: float = 8.0       # CogVideoX-5B is trained at 8 fps
+    length: int = 49  # frames — must be 8n+1 for CogVideoX-5B
+    fps: float = 8.0  # CogVideoX-5B is trained at 8 fps
     steps: int = 50
     cfg: float = 6.0
     scheduler: str = "CogVideoXDDIM"

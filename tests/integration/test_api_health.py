@@ -3,6 +3,7 @@
 httpx calls and Redis are mocked — no live dependencies needed.
 Uses settings.comfyui_url so the mock works regardless of .env configuration.
 """
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch

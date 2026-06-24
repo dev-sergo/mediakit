@@ -16,10 +16,10 @@ class ImageFormat(StrEnum):
 
 
 class Quality(StrEnum):
-    low = "low"      # 60
+    low = "low"  # 60
     medium = "medium"  # 75
-    high = "high"    # 85
-    max = "max"      # 95
+    high = "high"  # 85
+    max = "max"  # 95
 
     def as_int(self) -> int:
         return {"low": 60, "medium": 75, "high": 85, "max": 95}[self.value]
@@ -34,13 +34,14 @@ def parse_quality(value: str) -> "Quality | int":
 
 
 class ResizeMode(StrEnum):
-    fit = "fit"              # contain within bounds, no crop, preserve aspect
-    fill = "fill"            # cover: fill bounds, center-crop excess
+    fit = "fit"  # contain within bounds, no crop, preserve aspect
+    fill = "fill"  # cover: fill bounds, center-crop excess
     smart_crop = "smart_crop"  # saliency-aware crop
-    pad = "pad"              # fit + letterbox padding, no crop
+    pad = "pad"  # fit + letterbox padding, no crop
 
 
 # ─── Compress ────────────────────────────────────────────────────────────────
+
 
 class CompressParams(BaseModel):
     input: Path
@@ -65,6 +66,7 @@ class CompressResult(BaseModel):
 
 # ─── Resize ──────────────────────────────────────────────────────────────────
 
+
 class ResizeParams(BaseModel):
     input: Path
     output: Path | None = None
@@ -82,6 +84,7 @@ class ResizeResult(BaseModel):
 
 
 # ─── Convert ─────────────────────────────────────────────────────────────────
+
 
 class ConvertParams(BaseModel):
     input: Path
@@ -102,6 +105,7 @@ class ConvertResult(BaseModel):
 
 
 # ─── Variants ────────────────────────────────────────────────────────────────
+
 
 class VariantsParams(BaseModel):
     input: Path
@@ -134,6 +138,7 @@ class VariantsResult(BaseModel):
 
 
 # ─── LQIP ────────────────────────────────────────────────────────────────────
+
 
 class LqipParams(BaseModel):
     input: Path

@@ -27,6 +27,7 @@ VERIFY on GPU box (ComfyUI-RMBG v3.0.0 node names may differ):
   - qwen_image_vae.safetensors: correct VAE path
   - Lightning LoRA path: loras/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors
 """
+
 from __future__ import annotations
 
 import secrets
@@ -50,10 +51,10 @@ class ImgEditQwenWorkflowParams:
     clip_name: str = _QWEN_CLIP
     vae_name: str = _QWEN_VAE
     lora_name: str = _QWEN_LORA
-    lora_strength: float = 1.0      # 0.0 = no LoRA (base Qwen), 1.0 = full Lightning
-    use_lora: bool = True           # Lightning LoRA: 4 steps; base Qwen: 20+ steps
-    steps: int = 4                  # 4 for Lightning, 20+ for base
-    cfg: float = 1.0                # Qwen uses very low CFG
+    lora_strength: float = 1.0  # 0.0 = no LoRA (base Qwen), 1.0 = full Lightning
+    use_lora: bool = True  # Lightning LoRA: 4 steps; base Qwen: 20+ steps
+    steps: int = 4  # 4 for Lightning, 20+ for base
+    cfg: float = 1.0  # Qwen uses very low CFG
     seed: int = field(default_factory=lambda: secrets.randbits(32))
     width: int = 1024
     height: int = 1024
@@ -131,7 +132,7 @@ def build_img_edit_qwen_workflow(params: ImgEditQwenWorkflowParams) -> WorkflowD
             "mask_offset": 0,
             "invert_output": False,
             "refine_foreground": True,
-            "background": "Alpha",         # transparent bg → alpha channel = fg mask
+            "background": "Alpha",  # transparent bg → alpha channel = fg mask
             "background_color": "#FFFFFF",
         },
         "_meta": {"title": "BiRefNet (alpha mask)"},
@@ -168,7 +169,7 @@ def build_img_edit_qwen_workflow(params: ImgEditQwenWorkflowParams) -> WorkflowD
         "inputs": {
             "model": model_ref,
             "positive": ["6", 0],
-            "negative": ["6", 0],   # Qwen ignores negative — use same as positive
+            "negative": ["6", 0],  # Qwen ignores negative — use same as positive
             "latent_image": ["8", 0],
             "seed": params.seed,
             "steps": params.steps,
@@ -190,9 +191,9 @@ def build_img_edit_qwen_workflow(params: ImgEditQwenWorkflowParams) -> WorkflowD
     nodes["11"] = {
         "class_type": "ImageCompositeMasked",
         "inputs": {
-            "destination": ["4", 0],   # original image
-            "source": ["10", 0],       # edited region
-            "mask": ["7c", 0],         # inverted background mask (MASK type)
+            "destination": ["4", 0],  # original image
+            "source": ["10", 0],  # edited region
+            "mask": ["7c", 0],  # inverted background mask (MASK type)
             "x": 0,
             "y": 0,
             "resize_source": False,

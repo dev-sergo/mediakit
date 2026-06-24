@@ -5,6 +5,7 @@ bg_remove → upscale → compress → [variants]
 Suitable for product photos: cut out the subject, upscale for marketplace
 resolution, compress, and optionally generate responsive variants.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -47,22 +48,26 @@ class PhotoFinalizePipeline(BasePipeline):
 
         # 1. Background removal
         log.info("photo_finalize.bg_remove", input=str(input))
-        bg = await bg_remove(BgRemoveParams(
-            input=input,
-            output=out_dir / f"{stem}_nobg.png",
-            model=birefnet_model,
-            background_mode=background_mode,  # type: ignore[arg-type]
-            background_color=background_color,
-        ))
+        bg = await bg_remove(
+            BgRemoveParams(
+                input=input,
+                output=out_dir / f"{stem}_nobg.png",
+                model=birefnet_model,
+                background_mode=background_mode,  # type: ignore[arg-type]
+                background_color=background_color,
+            )
+        )
 
         # 2. Upscale
         log.info("photo_finalize.upscale", scale=upscale_scale)
-        up = await upscale(UpscaleParams(
-            input=bg.output,
-            output=out_dir / f"{stem}_upscaled.png",
-            model=upscale_model,
-            scale=upscale_scale,
-        ))
+        up = await upscale(
+            UpscaleParams(
+                input=bg.output,
+                output=out_dir / f"{stem}_upscaled.png",
+                model=upscale_model,
+                scale=upscale_scale,
+            )
+        )
 
         # 3. Compress
         final_ext = compress_format.extension
@@ -77,14 +82,16 @@ class PhotoFinalizePipeline(BasePipeline):
 
         # 4. Optional responsive variants
         if responsive_widths:
-            vresult = await make_variants(VariantsParams(
-                input=final,
-                output_dir=out_dir,
-                widths=responsive_widths,
-                formats=[compress_format],
-                quality=quality,
-                stem=stem,
-            ))
+            vresult = await make_variants(
+                VariantsParams(
+                    input=final,
+                    output_dir=out_dir,
+                    widths=responsive_widths,
+                    formats=[compress_format],
+                    quality=quality,
+                    stem=stem,
+                )
+            )
             outputs += [v.path for v in vresult.variants]
 
         log.info("photo_finalize.done", files=len(outputs))

@@ -38,6 +38,6 @@ class Img2VideoParams(BaseModel):
 
 
 class VideoResult(BaseModel):
-    output: Path   # .mp4 file
+    output: Path  # .mp4 file
     seed: int
     duration_s: float

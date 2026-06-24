@@ -6,6 +6,7 @@ can only run one inference job at a time.
 Start with: mediakit-worker
 or:         uv run mediakit-worker
 """
+
 from __future__ import annotations
 
 import time
@@ -26,6 +27,7 @@ log = structlog.get_logger(__name__)
 
 
 # ─── Task functions (called by arq) ──────────────────────────────────────────
+
 
 def _should_retry(ctx: dict[str, Any]) -> bool:
     return int(ctx.get("job_try", 1)) < 2
@@ -48,6 +50,7 @@ def _is_oom(exc: Exception) -> bool:
 async def _emergency_free_vram() -> None:
     """Call ComfyUI /free directly without a full client (safe in exception handlers)."""
     import httpx
+
     try:
         async with httpx.AsyncClient(base_url=settings.comfyui_url, timeout=20.0) as c:
             await c.post("/free", json={"unload_models": True, "free_memory": True})
@@ -60,6 +63,7 @@ async def task_txt2img(ctx: dict[str, Any], params_dict: dict[str, Any]) -> dict
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.txt2img import txt2img
     from mediakit.schemas.ai_ops import Txt2ImgParams
+
     try:
         params = Txt2ImgParams.model_validate(params_dict)
         result = await txt2img(params)
@@ -77,6 +81,7 @@ async def task_img_edit(ctx: dict[str, Any], params_dict: dict[str, Any]) -> dic
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.img_edit import img_edit
     from mediakit.schemas.ai_ops import ImgEditParams
+
     try:
         params = ImgEditParams.model_validate(params_dict)
         result = await img_edit(params)
@@ -94,6 +99,7 @@ async def task_bg_remove(ctx: dict[str, Any], params_dict: dict[str, Any]) -> di
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.bg_remove import bg_remove
     from mediakit.schemas.ai_ops import BgRemoveParams
+
     try:
         params = BgRemoveParams.model_validate(params_dict)
         result = await bg_remove(params)
@@ -111,6 +117,7 @@ async def task_upscale(ctx: dict[str, Any], params_dict: dict[str, Any]) -> dict
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.upscale import upscale
     from mediakit.schemas.ai_ops import UpscaleParams
+
     try:
         params = UpscaleParams.model_validate(params_dict)
         result = await upscale(params)
@@ -128,6 +135,7 @@ async def task_pipeline_article_cover(
     ctx: dict[str, Any], params_dict: dict[str, Any]
 ) -> dict[str, Any]:
     from mediakit.pipelines.article_cover import ArticleCoverPipeline
+
     params_dict["output_dir"] = Path(params_dict["output_dir"])
     result = await ArticleCoverPipeline().run(**params_dict)
     return {"outputs": [str(p) for p in result.outputs], **result.meta}
@@ -137,6 +145,7 @@ async def task_pipeline_photo_finalize(
     ctx: dict[str, Any], params_dict: dict[str, Any]
 ) -> dict[str, Any]:
     from mediakit.pipelines.photo_finalize import PhotoFinalizePipeline
+
     params_dict["input"] = Path(params_dict["input"])
     params_dict["output_dir"] = Path(params_dict["output_dir"])
     result = await PhotoFinalizePipeline().run(**params_dict)
@@ -147,6 +156,7 @@ async def task_pipeline_responsive_set(
     ctx: dict[str, Any], params_dict: dict[str, Any]
 ) -> dict[str, Any]:
     from mediakit.pipelines.responsive_set import ResponsiveSetPipeline
+
     params_dict["input"] = Path(params_dict["input"])
     if params_dict.get("output_dir"):
         params_dict["output_dir"] = Path(params_dict["output_dir"])
@@ -160,6 +170,7 @@ async def task_pipeline_product_shot(
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.pipelines.product_shot import ProductShotPipeline
     from mediakit.schemas.ai_ops import BiRefNetModel, UpscaleModel
+
     try:
         params_dict["input"] = Path(params_dict["input"])
         if params_dict.get("output_dir"):
@@ -169,9 +180,7 @@ async def task_pipeline_product_shot(
                 BiRefNetModel, params_dict["birefnet_model"]
             )
         if isinstance(params_dict.get("upscale_model"), str):
-            params_dict["upscale_model"] = _resolve_enum(
-                UpscaleModel, params_dict["upscale_model"]
-            )
+            params_dict["upscale_model"] = _resolve_enum(UpscaleModel, params_dict["upscale_model"])
         result = await ProductShotPipeline().run(**params_dict)
         return {"outputs": [str(p) for p in result.outputs], **result.meta}
     except (ComfyUITimeoutError, ComfyUIExecutionError) as exc:
@@ -188,6 +197,7 @@ async def task_pipeline_txt_to_video_hq(
 ) -> dict[str, Any]:
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.pipelines.txt_to_video_hq import TxtToVideoHqPipeline
+
     try:
         params_dict["output_dir"] = Path(params_dict["output_dir"])
         result = await TxtToVideoHqPipeline().run(**params_dict)
@@ -207,6 +217,7 @@ async def task_pipeline_photo_animate(
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.pipelines.photo_animate import PhotoAnimatePipeline
     from mediakit.schemas.ai_ops import BiRefNetModel, UpscaleModel
+
     try:
         params_dict["input"] = Path(params_dict["input"])
         if params_dict.get("output_dir"):
@@ -216,9 +227,7 @@ async def task_pipeline_photo_animate(
                 BiRefNetModel, params_dict["birefnet_model"]
             )
         if isinstance(params_dict.get("upscale_model"), str):
-            params_dict["upscale_model"] = _resolve_enum(
-                UpscaleModel, params_dict["upscale_model"]
-            )
+            params_dict["upscale_model"] = _resolve_enum(UpscaleModel, params_dict["upscale_model"])
         result = await PhotoAnimatePipeline().run(**params_dict)
         return {"outputs": [str(p) for p in result.outputs], **result.meta}
     except (ComfyUITimeoutError, ComfyUIExecutionError) as exc:
@@ -235,6 +244,7 @@ async def task_pipeline_seamless_video(
 ) -> dict[str, Any]:
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.pipelines.seamless_video import SeamlessVideoPipeline
+
     try:
         params_dict["output_dir"] = Path(params_dict["output_dir"])
         if params_dict.get("input"):
@@ -254,6 +264,7 @@ async def task_txt2video(ctx: dict[str, Any], params_dict: dict[str, Any]) -> di
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.txt2video import txt2video
     from mediakit.schemas.video_ops import Txt2VideoParams
+
     try:
         params = Txt2VideoParams.model_validate(params_dict)
         result = await txt2video(params)
@@ -271,6 +282,7 @@ async def task_img2video(ctx: dict[str, Any], params_dict: dict[str, Any]) -> di
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.img2video import img2video
     from mediakit.schemas.video_ops import Img2VideoParams
+
     try:
         params_dict["input"] = Path(params_dict["input"])
         params = Img2VideoParams.model_validate(params_dict)
@@ -301,13 +313,21 @@ async def task_cleanup_storage(ctx: dict[str, Any]) -> dict[str, Any]:
 
 # ─── Worker config ────────────────────────────────────────────────────────────
 
+
 class WorkerSettings:
     functions = [
-        task_txt2img, task_img_edit, task_bg_remove, task_upscale,
-        task_txt2video, task_img2video,
-        task_pipeline_article_cover, task_pipeline_photo_animate,
-        task_pipeline_photo_finalize, task_pipeline_product_shot,
-        task_pipeline_responsive_set, task_pipeline_txt_to_video_hq,
+        task_txt2img,
+        task_img_edit,
+        task_bg_remove,
+        task_upscale,
+        task_txt2video,
+        task_img2video,
+        task_pipeline_article_cover,
+        task_pipeline_photo_animate,
+        task_pipeline_photo_finalize,
+        task_pipeline_product_shot,
+        task_pipeline_responsive_set,
+        task_pipeline_txt_to_video_hq,
         task_pipeline_seamless_video,
         task_cleanup_storage,
     ]
@@ -324,6 +344,7 @@ def main() -> None:
         sentry_sdk.init(dsn=settings.sentry_dsn)
     if settings.comfyui_models_dir is not None:
         from mediakit.models_registry import warn_missing_models
+
         warn_missing_models(settings.comfyui_models_dir)
     log.info("mediakit_worker.starting", max_jobs=WorkerSettings.max_jobs)
     arq.run_worker(WorkerSettings)  # type: ignore[arg-type]
