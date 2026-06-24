@@ -216,6 +216,9 @@ uv run python lab/runner.py lab/configs/example.yaml
 
 ## HTTP API — full route list
 
+> A generated [`openapi.json`](../openapi.json) (OpenAPI 3.1, 21 operations) is committed
+> at the repo root for offline reference; the live Swagger UI is at `/docs`.
+
 ```
 GET   /healthz                              → {status, checks: {comfyui, redis}}
 GET   /docs                                 → Swagger UI
@@ -413,3 +416,11 @@ mediakit/
 ```
 
 Legend: ✅ done, ⚠️ stub or empty directory.
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for setup, linting/type-checking, and a
+step-by-step **"Adding a new op"** guide, plus the architecture rules every op/pipeline
+must follow (nothing GPU-touching runs outside the worker).

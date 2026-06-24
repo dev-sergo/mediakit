@@ -107,10 +107,10 @@ thing a portfolio reviewer remembers.
 
 Lower visual impact, raises "easy to evaluate" score.
 
-- [ ] Full-stack `docker-compose` (mediakit worker + Redis + ComfyUI) or a clear note that ComfyUI is external.
-- [ ] GitHub Actions running the 61 tests on PR.
-- [ ] Link the FastAPI `/docs` (Swagger) in the README, or commit an `openapi.json`.
-- [ ] A short "how to add an op/pipeline" already exists in CONTRIBUTING — cross-link it from DOCS.
+- [x] Full-stack `docker-compose` (mediakit worker + Redis + ComfyUI) or a clear note that ComfyUI is external. — Added a header note in `docker-compose.yml`: only Redis is containerised; ComfyUI is external (needs host GPU).
+- [x] GitHub Actions running the 61 tests on PR. — `.github/workflows/ci.yml` already runs unit+integration on push/PR; fixed its broken lint job (see commit `dba021e`).
+- [x] Link the FastAPI `/docs` (Swagger) in the README, or commit an `openapi.json`. — Committed generated `openapi.json` (OpenAPI 3.1, 21 ops) at repo root; linked from README + DOCS.
+- [x] A short "how to add an op/pipeline" already exists in CONTRIBUTING — cross-link it from DOCS. — Added a "Contributing" pointer at the end of DOCS.md.
 
 ---
 

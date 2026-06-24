@@ -196,7 +196,7 @@ curl -X POST $BASE/v1/pipelines/responsive-set \
 
 Authorization is disabled when `API_TOKEN` is empty.
 
-Full route list: see `/docs` (Swagger UI) or [DOCS.md](docs/DOCS.md).
+Full route list: see `/docs` (Swagger UI), the committed [openapi.json](openapi.json), or [DOCS.md](docs/DOCS.md).
 
 ---
 

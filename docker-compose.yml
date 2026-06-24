@@ -1,3 +1,6 @@
+# Only Redis (the job queue) is containerised here. ComfyUI is an EXTERNAL
+# service — it needs the host GPU, so run it separately on :8188 (see DOCS.md
+# "Running"). The arq worker connects to both over the network.
 services:
   redis:
     image: redis:7-alpine
