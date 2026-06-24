@@ -16,6 +16,27 @@ Local AI media toolkit for a single GPU machine. Three interfaces to one codebas
 
 ---
 
+## Gallery
+
+All generated on a single RTX 3090 (24 GB). More in [`examples/`](examples/).
+
+### Article covers — `article_cover` pipeline (txt2img → smart-crop 1200×630 → compress)
+
+| | |
+|---|---|
+| ![flower field](examples/covers/flower-field.jpg) | ![waterfall](examples/covers/waterfall.jpg) |
+| ![temple](examples/covers/temple.jpg) | ![zipline](examples/covers/zipline.jpg) |
+
+### Video — `txt2video` / `img2video` (LTX-Video)
+
+| | |
+|---|---|
+| ![clip 1](examples/video/video_cat.gif) | ![clip 2](examples/video/video_cat_2.gif) |
+
+> GIFs are downscaled previews. Source clips are 720×480 MP4 — regenerate with `mediakit txt2video --prompt "..." --model ltxv --length 49`.
+
+---
+
 ## Requirements
 
 - Python 3.11
