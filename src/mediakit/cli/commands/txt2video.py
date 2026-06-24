@@ -7,7 +7,7 @@ import typer
 from mediakit.ops.txt2video import txt2video as txt2video_op
 from mediakit.schemas.video_ops import Txt2VideoParams
 
-_HELP = "Generate video from text prompt via LTX-Video or Wan 2.1 (requires ComfyUI)."
+_HELP = "Generate video from text prompt via LTX-Video, Wan 2.1 or CogVideoX (requires ComfyUI)."
 app = typer.Typer(help=_HELP)
 
 
@@ -15,7 +15,7 @@ app = typer.Typer(help=_HELP)
 def cmd(
     prompt: Annotated[str, typer.Option("--prompt", "-p", help="Positive prompt")],
     output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
-    model: Annotated[str, typer.Option("--model", "-m", help="ltxv | wan")] = "ltxv",
+    model: Annotated[str, typer.Option("--model", "-m", help="ltxv | wan | cogvideox")] = "ltxv",
     negative: Annotated[str, typer.Option("--negative", "-n")] = "",
     width: Annotated[int, typer.Option("--width", "-w")] = 768,
     height: Annotated[int, typer.Option("--height", "-h")] = 512,

@@ -136,6 +136,44 @@ async def pipeline_txt_to_video_hq(
     return JobAccepted(job_id=job_id)
 
 
+@router.post("/seamless-video", status_code=status.HTTP_202_ACCEPTED)
+async def pipeline_seamless_video(
+    prompt: Annotated[str, Form()],
+    output_dir: Annotated[str, Form()],
+    file: Annotated[UploadFile | None, File()] = None,  # optional first-frame image
+    negative_prompt: Annotated[str, Form()] = "",
+    model: Annotated[str, Form()] = "cogvideox",
+    total_frames: Annotated[int, Form()] = 97,
+    fps: Annotated[float | None, Form()] = None,
+    width: Annotated[int | None, Form()] = None,
+    height: Annotated[int | None, Form()] = None,
+    overlap_frames: Annotated[int, Form()] = 8,
+    steps: Annotated[int, Form()] = 50,
+    cfg: Annotated[float, Form()] = 6.0,
+    seed: Annotated[int, Form()] = -1,
+) -> JobAccepted:
+    src = save_upload(file) if file is not None else None
+    job_id = await enqueue(
+        "task_pipeline_seamless_video",
+        {
+            "prompt": prompt,
+            "output_dir": output_dir,
+            "input": str(src) if src is not None else None,
+            "negative_prompt": negative_prompt,
+            "model": model,
+            "total_frames": total_frames,
+            "fps": fps,
+            "width": width,
+            "height": height,
+            "overlap_frames": overlap_frames,
+            "steps": steps,
+            "cfg": cfg,
+            "seed": seed,
+        },
+    )
+    return JobAccepted(job_id=job_id)
+
+
 @router.post("/photo-animate", status_code=status.HTTP_202_ACCEPTED)
 async def pipeline_photo_animate(
     file: Annotated[UploadFile, File()],

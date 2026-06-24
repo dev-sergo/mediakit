@@ -5,6 +5,10 @@ import uuid
 import structlog
 
 from mediakit.backends.comfyui.client import ComfyUIClient
+from mediakit.backends.comfyui.workflows.img2video_cogvideox import (
+    CogVideoXImg2VideoParams,
+    build_cogvideox_img2video_workflow,
+)
 from mediakit.backends.comfyui.workflows.img2video_ltxv import (
     LtxvImg2VideoParams,
     build_ltxv_img2video_workflow,
@@ -28,18 +32,32 @@ async def img2video(params: Img2VideoParams) -> VideoResult:
     ) as comfy:
         server_name = await comfy.upload_image(params.input)
 
-        workflow = build_ltxv_img2video_workflow(LtxvImg2VideoParams(
-            positive_prompt=params.prompt,
-            negative_prompt=params.negative_prompt,
-            image_filename=server_name,
-            width=params.width,
-            height=params.height,
-            length=params.length,
-            fps=params.fps,
-            steps=params.steps,
-            cfg=params.cfg,
-            seed=seed,
-        ))
+        if params.model == "cogvideox":
+            workflow = build_cogvideox_img2video_workflow(CogVideoXImg2VideoParams(
+                positive_prompt=params.prompt,
+                negative_prompt=params.negative_prompt,
+                image_filename=server_name,
+                width=params.width,
+                height=params.height,
+                length=params.length,
+                fps=params.fps,
+                steps=params.steps,
+                cfg=params.cfg,
+                seed=seed,
+            ))
+        else:  # ltxv
+            workflow = build_ltxv_img2video_workflow(LtxvImg2VideoParams(
+                positive_prompt=params.prompt,
+                negative_prompt=params.negative_prompt,
+                image_filename=server_name,
+                width=params.width,
+                height=params.height,
+                length=params.length,
+                fps=params.fps,
+                steps=params.steps,
+                cfg=params.cfg,
+                seed=seed,
+            ))
 
         prompt_id = await comfy.submit_workflow(workflow)
         raw_outputs = await comfy.wait_for_result(prompt_id)

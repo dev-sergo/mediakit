@@ -5,6 +5,10 @@ import uuid
 import structlog
 
 from mediakit.backends.comfyui.client import ComfyUIClient
+from mediakit.backends.comfyui.workflows.txt2video_cogvideox import (
+    CogVideoXTxt2VideoParams,
+    build_cogvideox_txt2video_workflow,
+)
 from mediakit.backends.comfyui.workflows.txt2video_ltxv import (
     LtxvTxt2VideoParams,
     build_ltxv_txt2video_workflow,
@@ -30,7 +34,19 @@ async def txt2video(params: Txt2VideoParams) -> VideoResult:
     async with ComfyUIClient(
         settings.comfyui_url, output_dir=tmp_dir, timeout_seconds=timeout
     ) as comfy:
-        if params.model == "wan":
+        if params.model == "cogvideox":
+            workflow = build_cogvideox_txt2video_workflow(CogVideoXTxt2VideoParams(
+                positive_prompt=params.prompt,
+                negative_prompt=params.negative_prompt,
+                width=params.width,
+                height=params.height,
+                length=params.length,
+                fps=params.fps,
+                steps=params.steps,
+                cfg=params.cfg,
+                seed=seed,
+            ))
+        elif params.model == "wan":
             workflow = build_wan_txt2video_workflow(WanTxt2VideoParams(
                 positive_prompt=params.prompt,
                 negative_prompt=params.negative_prompt,

@@ -27,9 +27,12 @@ REQUIRED_MODELS: dict[str, list[str]] = {
     # diffusion_models/qwen_image_edit_2511_fp8mixed.safetensors is in the same dir
     # text_encoders are separate
     "text_encoders": [
-        "t5xxl_fp8_e4m3fn.safetensors",       # Flux + LTX-Video
+        "t5xxl_fp8_e4m3fn.safetensors",       # Flux + LTX-Video + CogVideoX (T5 clip)
         "qwen_2.5_vl_7b_fp8_scaled.safetensors",  # Qwen Image Edit
     ],
+    # CogVideoX-5B / -5B-I2V weights are auto-downloaded by the kijai
+    # DownloadAndLoadCogVideoModel node into ComfyUI/models/CogVideo on first run,
+    # so they are intentionally not pinned here (no fixed filename to check).
     # VAE
     "vae": [
         "flux2-vae.safetensors",

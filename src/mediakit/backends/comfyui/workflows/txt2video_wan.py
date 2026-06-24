@@ -79,9 +79,9 @@ def build_wan_txt2video_workflow(params: WanTxt2VideoParams) -> WorkflowDict:
         "inputs": {"clip": ["2", 0], "text": params.negative_prompt},
         "_meta": {"title": "PROMPT_NEGATIVE"},
     }
-    # Empty latent for Wan txt2video — verify node name on box
+    # EmptyHunyuanLatentVideo is structurally compatible with Wan (same 16ch 4x-temporal 3D latent).
     nodes["6"] = {
-        "class_type": "EmptyHuanyuanVideoLatentVideo",
+        "class_type": "EmptyHunyuanLatentVideo",
         "inputs": {
             "width": params.width,
             "height": params.height,

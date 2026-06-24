@@ -230,6 +230,26 @@ async def task_pipeline_photo_animate(
         raise
 
 
+async def task_pipeline_seamless_video(
+    ctx: dict[str, Any], params_dict: dict[str, Any]
+) -> dict[str, Any]:
+    from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
+    from mediakit.pipelines.seamless_video import SeamlessVideoPipeline
+    try:
+        params_dict["output_dir"] = Path(params_dict["output_dir"])
+        if params_dict.get("input"):
+            params_dict["input"] = Path(params_dict["input"])
+        result = await SeamlessVideoPipeline().run(**params_dict)
+        return {"outputs": [str(p) for p in result.outputs], **result.meta}
+    except (ComfyUITimeoutError, ComfyUIExecutionError) as exc:
+        if isinstance(exc, ComfyUIExecutionError) and not _is_oom(exc):
+            raise
+        if _should_retry(ctx):
+            await _emergency_free_vram()
+            raise Retry(defer=30) from None
+        raise
+
+
 async def task_txt2video(ctx: dict[str, Any], params_dict: dict[str, Any]) -> dict[str, Any]:
     from mediakit.backends.comfyui.exceptions import ComfyUIExecutionError, ComfyUITimeoutError
     from mediakit.ops.txt2video import txt2video
@@ -288,6 +308,7 @@ class WorkerSettings:
         task_pipeline_article_cover, task_pipeline_photo_animate,
         task_pipeline_photo_finalize, task_pipeline_product_shot,
         task_pipeline_responsive_set, task_pipeline_txt_to_video_hq,
+        task_pipeline_seamless_video,
         task_cleanup_storage,
     ]
     cron_jobs = [cron(task_cleanup_storage, hour={3}, minute={0})]

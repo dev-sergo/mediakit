@@ -1,6 +1,6 @@
 # mediakit — developer documentation
 
-> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 52 tests (12 unit + 40 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested.
+> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 52 tests (12 unit + 40 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested. CogVideoX-5B added to txt2video/img2video (kijai wrapper, pending GPU-box verification) and a `seamless_video` pipeline for arbitrary-length clips.
 
 ---
 
@@ -104,8 +104,8 @@ FastAPI server              Typer CLI
 
 ### Job queue + HTTP server ✅
 
-- **arq worker** (`jobs/worker.py`): 13 tasks — 4 AI image ops + 2 video ops + 6 pipeline tasks + 1 cron cleanup. `max_jobs=1` (GPU concurrency).
-- **FastAPI** (`server/app.py`): 20 routes, bearer-token auth (disabled if `API_TOKEN` is empty).
+- **arq worker** (`jobs/worker.py`): 14 tasks — 4 AI image ops + 2 video ops + 7 pipeline tasks + 1 cron cleanup. `max_jobs=1` (GPU concurrency).
+- **FastAPI** (`server/app.py`): 21 routes, bearer-token auth (disabled if `API_TOKEN` is empty).
 - **Job polling:** `GET /v1/jobs/{id}` → `{status, result, enqueue_time}`. Result lives in Redis for 1 hour.
 - **Health check:** `GET /healthz` → checks ComfyUI (`/system_stats`) and Redis (ping).
 
@@ -119,6 +119,7 @@ FastAPI server              Typer CLI
 | `product_shot` | bg_remove → contact_shadow → composite(gradient_bg) → [upscale] → variants | E-commerce product photo on clean background |
 | `photo_animate` | [bg_remove] → [upscale] → img2video | Animate a still photo into a short video clip |
 | `txt_to_video_hq` | txt2img → img2video | Generate high-quality video from a text prompt |
+| `seamless_video` | [single pass] **or** segment → continuation → crossfade | Arbitrary-length clip with the seam hidden |
 
 **product_shot notes:**
 - Shadow is a synthetic contact shadow (blurred oval at the object base) drawn from the BiRefNet alpha mask
@@ -128,20 +129,52 @@ FastAPI server              Typer CLI
 **photo_animate notes:**
 - Best prompt for products: `subtle camera zoom in, product still, bokeh background`
 - Best negative: `hands, fingers, person, human, arm, water, pouring, liquid, motion`
-- LTX-Video native window = 49 frames (~2 sec). Requesting >49 frames creates a visible seam at the join point — stay at ≤49 for seamless results.
+- LTX-Video native window = 49 frames (~2 sec). Requesting >49 frames creates a visible seam at the join point — stay at ≤49 for seamless LTX results, or use CogVideoX (~6 s window) / the `seamless_video` pipeline for longer clips.
 
 **txt_to_video_hq notes:**
 - Same 49-frame seam limitation applies for vid_length
 - `httpx` write/read timeout set to 120s (was 60s) — needed for large keyframe upload over slow network
 
+**seamless_video notes:**
+- Default model `cogvideox` (~6 s seam-free in one pass). For ≤ native window the
+  pipeline emits a single clip and `seam_free: true` — nothing is stitched.
+- Longer requests are split into overlapping segments. With img2video-capable models
+  (ltxv, cogvideox) each segment continues from the *last frame* of the previous one,
+  so motion genuinely carries over; a short crossfade over `overlap_frames` (default 8)
+  removes any residual micro-jump. Wan has no img2video path, so it falls back to
+  independent segments joined by crossfade only — the cut is hidden but motion is not
+  continued (`continuation: false` in the result meta).
+- Stitching is native: OpenCV reads the seed frame, ffmpeg `xfade` does the crossfade
+  (`backends/native/video.py`). ffmpeg must be on PATH on the worker box.
+- `fps` defaults to the model's native rate; overriding it changes playback speed, not
+  the generated motion.
+
 ### AI video ops ✅
 
 | Op | CLI | HTTP | Models |
 |---|---|---|---|
-| `txt2video` | `mediakit txt2video "..."` | `POST /v1/ops/txt2video` | LTX-Video (ltxv) or Wan 2.1 (wan) |
-| `img2video` | `mediakit img2video --input photo.jpg "..."` | `POST /v1/ops/img2video` | LTX-Video img2vid |
+| `txt2video` | `mediakit txt2video "..."` | `POST /v1/ops/txt2video` | LTX-Video (ltxv), Wan 2.1 (wan) or CogVideoX-5B (cogvideox) |
+| `img2video` | `mediakit img2video --input photo.jpg "..."` | `POST /v1/ops/img2video` | LTX-Video or CogVideoX-5B-I2V (cogvideox) |
 
 Video workflow builders are in `backends/comfyui/workflows/`. Video jobs use `video_timeout_s = 900` (15 min).
+
+**Model native windows** (single seam-free pass — see `backends/comfyui/video_models.py`):
+
+| Model | Native fps | Native window | ≈ seconds | img2video |
+|---|---|---|---|---|
+| `ltxv` | 24 | 49 frames (9+8n) | ~2 s | yes |
+| `wan` | 16 | 81 frames (4n+1) | ~5 s | no |
+| `cogvideox` | 8 | 49 frames (8n+1) | ~6 s | yes (CogVideoX-5B-I2V) |
+
+CogVideoX-5B is trained at 8 fps, so its 49-frame window is ~6 s — roughly 3x LTX's
+seam-free window. For clips up to a model's native window, **no stitching is needed**;
+just pick the model. For longer clips use the `seamless_video` pipeline.
+
+**CogVideoX workflow builders** (`txt2video_cogvideox.py`, `img2video_cogvideox.py`) target
+the **kijai ComfyUI-CogVideoXWrapper** node set (`DownloadAndLoadCogVideoModel`,
+`CogVideoTextEncode`, `CogVideoImageEncode`, `CogVideoSampler`, `CogVideoDecode`). Each
+builder carries a `VERIFY on GPU box` block — node input/output arity must be confirmed
+against the installed wrapper version (weights auto-download to `ComfyUI/models/CogVideo`).
 
 ### Audio backend (Phase 10 — reserved)
 
@@ -213,6 +246,7 @@ POST  /v1/pipelines/responsive-set          multipart: file + form: output_dir, 
 POST  /v1/pipelines/product-shot            multipart: file + form: output_dir, birefnet_model, bg_color, padding_pct, gradient_strength, shadow_opacity, shadow_blur, do_upscale, upscale_model, upscale_scale, formats, widths, quality
 POST  /v1/pipelines/photo-animate           multipart: file + form: prompt, negative_prompt, output_dir, remove_bg, birefnet_model, do_upscale, upscale_model, upscale_scale, width, height, length, fps, steps, cfg, seed
 POST  /v1/pipelines/txt-to-video-hq         form: prompt, negative_prompt, output_dir, img_backend, width, height, img_steps, img_cfg, img_seed, vid_length, vid_fps, vid_steps, vid_cfg, vid_seed
+POST  /v1/pipelines/seamless-video          form: prompt, output_dir, model, total_frames, fps, width, height, overlap_frames, steps, cfg, seed + optional file (first-frame image)
 ```
 
 **Auth:** `Authorization: Bearer <API_TOKEN>`. If `API_TOKEN` is empty, auth is disabled.
@@ -323,23 +357,26 @@ mediakit/
 │   │   ├── upscale.py          ✅ comfyui (ESRGAN)
 │   │   ├── txt2img.py          ✅ comfyui (SDXL / Flux 2)
 │   │   ├── img_edit.py         ✅ comfyui (SDXL inpainting / Qwen)
-│   │   ├── txt2video.py        ✅ comfyui (LTX-Video / Wan 2.1)
-│   │   └── img2video.py        ✅ comfyui (LTX-Video)
+│   │   ├── txt2video.py        ✅ comfyui (LTX-Video / Wan 2.1 / CogVideoX-5B)
+│   │   └── img2video.py        ✅ comfyui (LTX-Video / CogVideoX-5B-I2V)
 │   ├── pipelines/              # named op compositions
 │   │   ├── article_cover.py    ✅ txt2img → smart_crop → compress
 │   │   ├── responsive_set.py   ✅ compress → variants → lqip
 │   │   ├── photo_finalize.py   ✅ bg_remove → upscale → compress
 │   │   ├── product_shot.py     ✅ bg_remove → contact_shadow → composite → [upscale] → variants
 │   │   ├── photo_animate.py    ✅ [bg_remove] → [upscale] → img2video
-│   │   └── txt_to_video_hq.py  ✅ txt2img → img2video
+│   │   ├── txt_to_video_hq.py  ✅ txt2img → img2video
+│   │   └── seamless_video.py   ✅ single pass | segment → continuation → crossfade
 │   ├── backends/
 │   │   ├── comfyui/
 │   │   │   ├── client.py       ✅ HTTP+WS client
 │   │   │   ├── exceptions.py   ✅
-│   │   │   └── workflows/      ✅ programmatic workflow builders
+│   │   │   ├── video_models.py ✅ per-model native window profiles
+│   │   │   └── workflows/      ✅ programmatic workflow builders (+ cogvideox t2v/i2v)
 │   │   ├── native/
 │   │   │   ├── encoder.py      ✅ Pillow encode
-│   │   │   └── resizer.py      ✅ resize + OpenCV saliency
+│   │   │   ├── resizer.py      ✅ resize + OpenCV saliency
+│   │   │   └── video.py        ✅ last-frame extract + ffmpeg crossfade concat
 │   │   └── audio/              ⚠️ placeholder (Phase 10)
 │   ├── jobs/
 │   │   ├── queue.py            ✅ arq enqueue / poll
