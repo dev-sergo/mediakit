@@ -12,7 +12,7 @@ Local AI media toolkit for a single GPU machine. Three interfaces to one codebas
 
 **AI image ops** — txt2img (SDXL or Flux 2), img-edit (SDXL or Qwen), bg-remove, upscale. Run via ComfyUI on a local GPU through an arq job queue.
 
-**AI video ops** — txt2video (LTX-Video or Wan 2.1), img2video (LTX-Video). Animate from text or image.
+**AI video ops** — txt2video (LTX-Video, Wan 2.1, CogVideoX-5B), img2video (LTX-Video, CogVideoX-5B-I2V). Animate from text or image; seamless arbitrary-length clips via the `seamless_video` pipeline.
 
 ---
 
@@ -81,13 +81,13 @@ Animate a still photo into a short clip — 49 frames @ 8 fps on RTX 3090:
 > GIF is a downscaled preview (251 KB). Source clip is 720×480 MP4, 2 s — regenerate with
 > `mediakit img2video --input photo.jpg --prompt "subtle zoom in, product still" --model cogvideox`.
 
-### Video — `txt2video` / `img2video` (LTX-Video, placeholder clips)
+### Video — `txt2video` (LTX-Video)
 
 | | |
 |---|---|
 | ![clip 1](examples/video/video_cat.gif) | ![clip 2](examples/video/video_cat_2.gif) |
 
-> Placeholder LTX-Video clips. Regenerate with `mediakit txt2video --prompt "..." --model ltxv --length 49`.
+> GIFs are downscaled previews. Regenerate with `mediakit txt2video --prompt "..." --model ltxv --length 49`.
 
 ---
 
@@ -296,8 +296,12 @@ Pass an integer (0–100) to override.
 | Pipeline | Steps | Output |
 |----------|-------|--------|
 | `article_cover` | txt2img (sdxl\|flux) → smart_crop(1200×630) → compress | Blog OG cover + optional variants |
-| `responsive_set` | compress → variants(webp+avif) → lqip | Next.js-ready responsive set |
+| `responsive_set` | compress → variants(webp+avif) → lqip | Next.js-ready responsive set + blurDataURL |
 | `photo_finalize` | bg_remove → upscale → compress | Product photo ready for marketplace |
+| `product_shot` | bg_remove → contact_shadow → gradient_bg → upscale → variants | E-commerce product on clean background |
+| `photo_animate` | [bg_remove] → [upscale] → img2video | Animate a still photo into a short clip |
+| `txt_to_video_hq` | txt2img → img2video | High-quality video from a text prompt |
+| `seamless_video` | segment → continuation → crossfade | Arbitrary-length clip with hidden seam |
 
 ---
 
