@@ -70,13 +70,24 @@ Responsive WebP ladder from a 167 KB / 1200 px source — smaller screens fetch 
 > AVIF variants are emitted alongside WebP for format negotiation. Regenerate with
 > `mediakit variants photo.jpg --formats webp,avif` or the `responsive_set` pipeline.
 
-### Video — `txt2video` / `img2video` (LTX-Video)
+### Video — `img2video` (CogVideoX-5B-I2V)
+
+Animate a still photo into a short clip — 49 frames @ 8 fps on RTX 3090:
+
+| Input photo | img2video (CogVideoX-5B-I2V) |
+|---|---|
+| ![original](thai-ice-green-tea.jpeg) | ![matcha zoom](examples/video/matcha_i2v_cogvideox.gif) |
+
+> GIF is a downscaled preview (251 KB). Source clip is 720×480 MP4, 2 s — regenerate with
+> `mediakit img2video --input photo.jpg --prompt "subtle zoom in, product still" --model cogvideox`.
+
+### Video — `txt2video` / `img2video` (LTX-Video, placeholder clips)
 
 | | |
 |---|---|
 | ![clip 1](examples/video/video_cat.gif) | ![clip 2](examples/video/video_cat_2.gif) |
 
-> GIFs are downscaled previews. Source clips are 720×480 MP4 — regenerate with `mediakit txt2video --prompt "..." --model ltxv --length 49`.
+> Placeholder LTX-Video clips. Regenerate with `mediakit txt2video --prompt "..." --model ltxv --length 49`.
 
 ---
 

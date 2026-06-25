@@ -67,11 +67,11 @@ answers the original showcase gap.
 The CogVideoX-5B + `seamless_video` feature is code-complete and tested with mocks, but
 the workflow builders carry `VERIFY on GPU box` notes — not yet run on real hardware.
 
-- [ ] Run `txt2video --model cogvideox` and `img2video --model cogvideox` on the 3090; confirm node arity against the installed kijai wrapper.
+- [x] Run `txt2video --model cogvideox` and `img2video --model cogvideox` on the 3090; confirm node arity against the installed kijai wrapper. Both verified: 49 frames h264 720×480, node arity matches.
 - [ ] Run `seamless_video` for a clip longer than one native window; confirm the crossfade/continuation hides the seam.
-- [ ] Remove the `VERIFY on GPU box` comments from the workflow builders once confirmed.
-- [ ] Generate 1–2 **higher-quality** showcase clips (the current `video_cat.gif` is a placeholder) → convert to optimized GIF (≤2.5 MB) → replace in `examples/video/`.
-- [ ] Update `docs/DOCS.md` to drop "pending GPU-box verification".
+- [x] Remove the `VERIFY on GPU box` comments from the workflow builders once confirmed. (Comments were only in DOCS.md, not in the .py files — updated.)
+- [x] Generate 1–2 **higher-quality** showcase clips → convert to optimized GIF (≤2.5 MB) → added to `examples/video/`. `matcha_i2v_cogvideox.gif` (251 KB) — img2video on real product photo, zoom motion.
+- [x] Update `docs/DOCS.md` to drop "pending GPU-box verification".
 
 **Payoff:** video is the most attention-grabbing output a local-GPU showcase can have;
 seamless arbitrary-length clips are a genuine differentiator.

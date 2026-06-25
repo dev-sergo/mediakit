@@ -1,6 +1,6 @@
 # mediakit — developer documentation
 
-> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 61 tests (12 unit + 49 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested. CogVideoX-5B added to txt2video/img2video (kijai wrapper, pending GPU-box verification) and a `seamless_video` pipeline for arbitrary-length clips.
+> Status: native ops, AI image ops, AI video ops, job queue, HTTP server, CLI, and pipelines are all implemented. 61 tests (12 unit + 49 integration). New pipelines: product_shot, photo_animate, txt_to_video_hq added and manually tested. CogVideoX-5B added to txt2video/img2video (kijai wrapper, verified on RTX 3090) and a `seamless_video` pipeline for arbitrary-length clips.
 
 ---
 
@@ -172,9 +172,8 @@ just pick the model. For longer clips use the `seamless_video` pipeline.
 
 **CogVideoX workflow builders** (`txt2video_cogvideox.py`, `img2video_cogvideox.py`) target
 the **kijai ComfyUI-CogVideoXWrapper** node set (`DownloadAndLoadCogVideoModel`,
-`CogVideoTextEncode`, `CogVideoImageEncode`, `CogVideoSampler`, `CogVideoDecode`). Each
-builder carries a `VERIFY on GPU box` block — node input/output arity must be confirmed
-against the installed wrapper version (weights auto-download to `ComfyUI/models/CogVideo`).
+`CogVideoTextEncode`, `CogVideoImageEncode`, `CogVideoSampler`, `CogVideoDecode`).
+Node arity confirmed on RTX 3090 — weights auto-download to `ComfyUI/models/CogVideo`.
 
 ### Audio backend (Phase 10 — reserved)
 
