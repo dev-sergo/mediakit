@@ -43,6 +43,12 @@ Original (43 KB, 960×1280) → transparent cutout → 2× upscale compressed to
 
 ![photo_finalize pipeline](examples/photo_finalize/before-after.jpg)
 
+### Image pipelines — `upscale` (NMKD-Siax 4×)
+
+Tight crop — same zone at input resolution vs 4× ESRGAN upscale (960×1280 → 3840×5120):
+
+![upscale crop comparison](examples/upscale/crop-comparison.jpg)
+
 ### Image pipelines — `responsive_set` (compress → variants → lqip)
 
 Native, **no GPU**: one source image → a responsive WebP/AVIF width ladder plus a
