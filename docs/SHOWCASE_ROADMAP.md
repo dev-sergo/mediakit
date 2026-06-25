@@ -52,7 +52,7 @@ README Gallery.
 
 - [x] `product_shot` — run on thai-ice-green-tea.jpeg; before/after pair committed to `examples/product_shot/`. Added to README Gallery.
 - [x] `responsive_set` — **native, no-GPU**; done on the Mac. Curated `examples/responsive/lqip-blur-vs-full.jpg` (123-byte LQIP placeholder vs full image) + a WebP width-ladder table in the README. (Source covers are 1200 px, so the ladder tops out at 1024w; AVIF runs larger than WebP on these already-compressed JPEGs, so the table shows WebP only.)
-- [ ] `photo_finalize` — marketplace-ready before/after (bg-remove → upscale → compress).
+- [x] `photo_finalize` — 3-panel collage committed to `examples/photo_finalize/`: original 43 KB → transparent cutout → 2× upscale at 68 KB WebP (1920×2560). Added to README Gallery.
 - [ ] `upscale` — a tight crop comparison (input vs 4×) so the detail gain is visible.
 - [~] Add an **"Image pipelines"** subsection to the README Gallery with these. (Created, currently covers `responsive_set`; product_shot/photo_finalize/upscale entries pending GPU.)
 - [ ] Keep `examples/` curated — pick the best 1–2 per pipeline, not bulk `output/`.

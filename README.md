@@ -37,6 +37,12 @@ bg-remove → synthetic contact shadow → radial gradient background → 4× up
 
 > Before/after side-by-side: [examples/product_shot/before-after.jpg](examples/product_shot/before-after.jpg)
 
+### Image pipelines — `photo_finalize` (bg-remove → upscale → compress)
+
+Original (43 KB, 960×1280) → transparent cutout → 2× upscale compressed to 68 KB WebP (1920×2560):
+
+![photo_finalize pipeline](examples/photo_finalize/before-after.jpg)
+
 ### Image pipelines — `responsive_set` (compress → variants → lqip)
 
 Native, **no GPU**: one source image → a responsive WebP/AVIF width ladder plus a
