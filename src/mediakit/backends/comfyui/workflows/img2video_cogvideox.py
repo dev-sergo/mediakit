@@ -11,7 +11,7 @@ Architecture (kijai wrapper):
   CLIPLoader (t5xxl, type=sd3) → clip
   CogVideoTextEncode ×2 → positive / negative conditioning
   LoadImage → image
-  CogVideoImageEncode (vae, image) → image_cond_latents
+  CogVideoImageEncode (vae, start_image) → image_cond_latents
   EmptyLatentImage (width, height) → samples (provides H/W shape to CogVideoSampler)
   CogVideoSampler (model, positive, negative, samples, image_cond_latents, num_frames, ...)
   CogVideoDecode (vae, samples) → image frames
@@ -20,7 +20,7 @@ Architecture (kijai wrapper):
 Notes:
   - CogVideoSampler reads H/W from the `samples` latent shape, not direct inputs.
     EmptyLatentImage carries the spatial dimensions the sampler needs.
-  - CogVideoImageEncode takes `vae` (output 1) and `image` — no `pipeline` input.
+  - CogVideoImageEncode takes `vae` (output 1) and `start_image` — no `pipeline` input.
   - CogVideoDecode takes `vae` and `samples` only — no `pipeline` input.
   - model_id must be the I2V checkpoint ("THUDM/CogVideoX-5b-I2V").
 """
@@ -103,7 +103,7 @@ def build_cogvideox_img2video_workflow(params: CogVideoXImg2VideoParams) -> Work
         "class_type": "CogVideoImageEncode",
         "inputs": {
             "vae": ["1", 1],
-            "image": ["5", 0],
+            "start_image": ["5", 0],  # kijai wrapper ≥1.x renamed image → start_image
         },
         "_meta": {"title": "Image Encode"},
     }
