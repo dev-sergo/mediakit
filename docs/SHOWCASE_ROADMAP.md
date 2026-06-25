@@ -50,7 +50,7 @@ The single highest-ROI visual win. We have pipelines that produce striking befor
 output but show **none** of it. Run each, commit curated results to `examples/`, add to the
 README Gallery.
 
-- [ ] `product_shot` — run on 2–3 product photos; show bg-remove → contact-shadow → gradient-bg → upscale. Commit before/after pair.
+- [x] `product_shot` — run on thai-ice-green-tea.jpeg; before/after pair committed to `examples/product_shot/`. Added to README Gallery.
 - [x] `responsive_set` — **native, no-GPU**; done on the Mac. Curated `examples/responsive/lqip-blur-vs-full.jpg` (123-byte LQIP placeholder vs full image) + a WebP width-ladder table in the README. (Source covers are 1200 px, so the ladder tops out at 1024w; AVIF runs larger than WebP on these already-compressed JPEGs, so the table shows WebP only.)
 - [ ] `photo_finalize` — marketplace-ready before/after (bg-remove → upscale → compress).
 - [ ] `upscale` — a tight crop comparison (input vs 4×) so the detail gain is visible.

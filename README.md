@@ -27,6 +27,16 @@ All generated on a single RTX 3090 (24 GB). More in [`examples/`](examples/).
 | ![flower field](examples/covers/flower-field.jpg) | ![waterfall](examples/covers/waterfall.jpg) |
 | ![temple](examples/covers/temple.jpg) | ![zipline](examples/covers/zipline.jpg) |
 
+### Image pipelines — `product_shot` (bg-remove → contact shadow → gradient bg → upscale)
+
+bg-remove → synthetic contact shadow → radial gradient background → 4× upscale, all in one pipeline call:
+
+| Original | product_shot pipeline |
+|---|---|
+| ![original](thai-ice-green-tea.jpeg) | ![product shot](examples/product_shot/thai-ice-green-tea-product-shot.png) |
+
+> Before/after side-by-side: [examples/product_shot/before-after.jpg](examples/product_shot/before-after.jpg)
+
 ### Image pipelines — `responsive_set` (compress → variants → lqip)
 
 Native, **no GPU**: one source image → a responsive WebP/AVIF width ladder plus a
