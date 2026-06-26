@@ -15,8 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   overlapping segments stitched with a native ffmpeg `xfade` crossfade, and
   img2video-capable models continue motion from the previous segment's last frame.
 - **CogVideoX-5B** added to `txt2video` / `img2video` (kijai ComfyUI-CogVideoXWrapper),
-  with a ~6 s native window. *Code-complete and tested with mocks; the workflow
-  builders still carry `VERIFY on GPU box` notes — not yet confirmed on real hardware.*
+  with a ~6 s native window. Verified on RTX 3090 — img2video produces 49-frame 720×480
+  clips; `CogVideoImageEncode` node uses `start_image` (kijai wrapper ≥1.x rename from
+  `image`).
+- **Lab experiments** — 5 parameter grids run on RTX 3090 (CFG scale, step count, sampler
+  comparison, seed variance, SDXL steps). Results committed as contact-sheet images in
+  [`docs/experiments/`](docs/experiments/) with per-grid findings. Confirmed defaults:
+  CFG 7.5, 25 steps, `dpmpp_2m + karras`.
 - Generated [`openapi.json`](openapi.json) (OpenAPI 3.1, 21 operations) committed at
   the repo root for offline API reference.
 

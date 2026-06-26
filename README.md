@@ -364,6 +364,14 @@ Native ops run synchronously inside the FastAPI process. Nothing that touches th
 
 ---
 
+## Lab experiments
+
+Systematic parameter sweeps (CFG scale, step count, sampler comparison, seed variance) run on the RTX 3090 via `lab/runner.py`. Results confirm the defaults used in pipeline configs.
+
+See [`docs/experiments/`](docs/experiments/) for contact sheets and findings.
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
